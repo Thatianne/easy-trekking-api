@@ -1,6 +1,6 @@
 import {Request, Response} from "express";
-import { AppDataSource } from '../config/db';
-import { Trekking } from '../models/trekking';
+import { AppDataSource } from '../database/configuration/db'
+import { Trekking } from '../entities/trekking';
 
 export class TrekkingsController {
   async list(request: Request, response: Response) {

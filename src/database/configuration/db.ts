@@ -1,9 +1,5 @@
 import { DataSource } from 'typeorm'
-import { City } from '../models/city';
-import { DifficultLevel } from '../models/difficult-level';
-import { State } from '../models/state';
-import { Trekking } from '../models/trekking';
-import { User } from '../models/user';
+import { AvailableEntities } from '../../entities'
 
 const AppDataSource = new DataSource({
   type: "mysql",
@@ -14,7 +10,7 @@ const AppDataSource = new DataSource({
   database: process.env.DB_NAME,
   synchronize: true,
   logging: true,
-  entities: [Trekking, State, City, DifficultLevel, User],
+  entities: AvailableEntities,
   subscribers: [],
   migrations: [],
 });

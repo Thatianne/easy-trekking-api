@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToOne, JoinTable, CreateDateColumn, UpdateDateColumn, DeleteDateColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToOne, ManyToOne, JoinColumn, CreateDateColumn, UpdateDateColumn, DeleteDateColumn } from 'typeorm';
 import { User } from './user';
 import { DocumentType } from './document-type';
 
@@ -7,11 +7,11 @@ export class UserDocument {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @OneToOne(() => User)
-  @JoinTable()
+  @ManyToOne(() => User)
   user: User;
 
   @OneToOne(() => DocumentType)
+  @JoinColumn()
   documentType: DocumentType;
 
   @Column()

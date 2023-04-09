@@ -1,5 +1,5 @@
 import {Request, Response} from "express";
-import { AppDataSource } from '../database/configuration/db'
+import { AppDataSource } from '../database/configuration/db-data-source'
 import { Trekking } from '../entities/trekking';
 
 export class TrekkingsController {

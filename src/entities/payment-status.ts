@@ -6,8 +6,5 @@ export class PaymentStatus {
   id: number;
 
   @Column()
-  name: string;
-
-  @Column()
   value: string;
 }

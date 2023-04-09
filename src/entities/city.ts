@@ -1,4 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
+import { State } from './state';
 
 @Entity()
 export class City {
@@ -6,8 +7,8 @@ export class City {
   id: number;
 
   @Column()
-  name: string;
-
-  @Column()
   value: string;
+
+  @ManyToOne(() => State)
+  state: State;
 }

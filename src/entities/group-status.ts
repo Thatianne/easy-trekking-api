@@ -6,8 +6,5 @@ export class GroupStatus {
   id: number;
 
   @Column()
-  name: string;
-
-  @Column()
   value: string;
 }

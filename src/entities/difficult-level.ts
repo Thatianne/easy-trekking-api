@@ -6,8 +6,5 @@ export class DifficultLevel {
   id: number;
 
   @Column()
-  name: string;
-
-  @Column()
   value: string;
 }

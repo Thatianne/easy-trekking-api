@@ -8,7 +8,7 @@ export class TrekkingDescription {
 
   @ManyToOne(() => Trekking, (trekking) => trekking.id)
   trekking: Trekking;
-  
+
   @Column()
   description: string;
 

@@ -5,7 +5,7 @@ import express from 'express';
 import serverless from 'serverless-http';
 import 'reflect-metadata';
 import { AdminRoute, TouristGuideRoute, TouristRoute } from './routes';
-import { AppDataSource } from './database/configuration/db'
+import { AppDataSource } from './database/configuration/db-data-source'
 
 const app = express();
 

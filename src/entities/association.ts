@@ -7,9 +7,6 @@ export class Association {
   id: number;
 
   @Column()
-  name: string;
-
-  @Column()
   value: string;
 
   @ManyToMany(() => User)

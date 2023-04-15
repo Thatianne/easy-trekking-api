@@ -1,0 +1,2 @@
+export const SUCCESS_STATUS_CODE = 200;
+export const BAD_REQUEST_STATUS_CODE = 400;

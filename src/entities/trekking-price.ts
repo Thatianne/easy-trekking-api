@@ -10,6 +10,9 @@ export class TrekkingPrice {
   trekking: Trekking;
 
   @Column()
+  price: number;
+
+  @Column()
   startDate: Date;
 
   @Column()

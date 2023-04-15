@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToOne, OneToMany, CreateDateColumn, UpdateDateColumn, DeleteDateColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToOne, OneToMany, ManyToOne, CreateDateColumn, UpdateDateColumn, DeleteDateColumn } from 'typeorm';
 import { State } from './state';
 import { City } from './city';
 import { DifficultLevel } from './difficult-level';
@@ -12,27 +12,6 @@ export class Trekking {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @OneToOne(() => State)
-  state: State;
-
-  @OneToOne(() => City)
-  city: City;
-
-  @OneToMany(() => TrekkingDescription, (description) => description.trekking)
-  descriptions: TrekkingDescription[];
-
-  @OneToMany(() => TrekkingImage, (image) => image.trekking)
-  images: TrekkingImage[];
-
-  @OneToMany(() => TrekkingPrice, (price) => price.trekking)
-  prices: TrekkingPrice[];
-
-  @OneToMany(() => TrekkingRate, (rate) => rate.trekking)
-  rates: TrekkingRate[];
-
-  @OneToOne(() => DifficultLevel)
-  difficultLevel: DifficultLevel;
-
   @Column()
   name: string;
 
@@ -42,23 +21,44 @@ export class Trekking {
   @Column()
   end: string;
 
+  @ManyToOne(() => State)
+  state: State;
+
+  @ManyToOne(() => City)
+  city: City;
+
   @Column()
   distanceInMeters: number;
 
   @Column()
   durationInHours: number;
 
-  @Column()
-  minimunPeopleAmount: number;
+  @ManyToOne(() => DifficultLevel)
+  difficultLevel: DifficultLevel;
+
+  @OneToMany(() => TrekkingDescription, (description) => description.trekking, { cascade: ['insert', 'update'] })
+  descriptions: TrekkingDescription[];
+
+  @OneToMany(() => TrekkingImage, (image) => image.trekking, { cascade: ['insert', 'update'] })
+  images: TrekkingImage[];
+
+  @OneToMany(() => TrekkingPrice, (price) => price.trekking, { cascade: ['insert', 'update'] })
+  prices: TrekkingPrice[];
 
   @Column()
-  miximunPeopleAmount: number;
+  minPeople: number;
 
   @Column()
-  daysToCloseGroup: number;
+  maxPeople: number;
 
   @Column()
-  daysToHalfOfPayment: number;
+  daysFormGroup: number;
+
+  @Column()
+  daysCompletePayment: number;
+
+  @OneToMany(() => TrekkingRate, (rate) => rate.trekking)
+  rates: TrekkingRate[];
 
   @CreateDateColumn()
   createdAt: Date;
@@ -68,4 +68,5 @@ export class Trekking {
 
   @DeleteDateColumn()
   deletedAt?: Date;
+
 }

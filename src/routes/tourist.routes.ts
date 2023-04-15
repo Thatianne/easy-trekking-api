@@ -1,9 +1,9 @@
 import { Router } from 'express';
-import { TrekkingsController } from '../controllers/trekkings-controller';
+import { TrekkingController } from '../controllers/trekking-controller';
 
 const TouristRoute = Router();
-const trekkingsController = new TrekkingsController();
+const trekkingController = new TrekkingController();
 
-TouristRoute.get('/trekkings', trekkingsController.list)
+TouristRoute.get('/trekkings', trekkingController.list)
 
 export { TouristRoute };

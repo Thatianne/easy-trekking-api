@@ -14,7 +14,6 @@ const AppDataSource = new DataSource({
     logging: true,
     entities: [join(__dirname, './../../entities/{*.ts,*.js}')],
     subscribers: [],
-    // migrationsRun: true,
     migrations: [join(__dirname, './../migrations/{*.ts,*.js}')],
     migrationsTableName: 'migration'
 });

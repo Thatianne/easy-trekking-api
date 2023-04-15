@@ -1,9 +1,10 @@
 import { Router } from 'express';
-import { TrekkingsController } from '../controllers/trekkings-controller';
+import { TrekkingController } from '../controllers/trekking-controller';
 
 const AdminRoute = Router();
-const trekkingsController = new TrekkingsController();
+const trekkingController = new TrekkingController();
 
-AdminRoute.get('/trekkings', trekkingsController.list);
+AdminRoute.get('/trekkings', trekkingController.list.bind(trekkingController));
+AdminRoute.post('/trekkings', trekkingController.add.bind(trekkingController));
 
 export { AdminRoute };

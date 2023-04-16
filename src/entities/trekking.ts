@@ -36,13 +36,13 @@ export class Trekking {
   @ManyToOne(() => DifficultLevel)
   difficultLevel: DifficultLevel;
 
-  @OneToMany(() => TrekkingDescription, (description) => description.trekking, { cascade: ['insert', 'update'] })
+  @OneToMany(() => TrekkingDescription, (description) => description.trekking, { cascade: true })
   descriptions: TrekkingDescription[];
 
-  @OneToMany(() => TrekkingImage, (image) => image.trekking, { cascade: ['insert', 'update'] })
+  @OneToMany(() => TrekkingImage, (image) => image.trekking, { cascade: true })
   images: TrekkingImage[];
 
-  @OneToMany(() => TrekkingPrice, (price) => price.trekking, { cascade: ['insert', 'update'] })
+  @OneToMany(() => TrekkingPrice, (price) => price.trekking, { cascade: true })
   prices: TrekkingPrice[];
 
   @Column()
@@ -66,7 +66,7 @@ export class Trekking {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  @DeleteDateColumn()
+  @DeleteDateColumn({ select: false })
   deletedAt?: Date;
 
 }

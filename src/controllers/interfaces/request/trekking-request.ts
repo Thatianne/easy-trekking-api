@@ -16,5 +16,17 @@ export interface TrekkingRequest {
     maxPeople: number;
     daysFormGroup: number;
     daysCompletePayment: number;
+}
 
+export interface TrekkingFindRequest {
+    name: string
+    state: number;
+    city: number;
+    durationInHours: number;
+    distanceInMeters: number;
+    difficultLevel: number;
+}
+
+export interface TrekkingDeleteRequest {
+    id: string
 }

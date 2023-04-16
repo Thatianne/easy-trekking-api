@@ -23,6 +23,6 @@ export class TouristUserGroup {
   @UpdateDateColumn()
   updated_at: Date;
 
-  @DeleteDateColumn()
+  @DeleteDateColumn({ select: false })
   deleted_at?: Date;
 }

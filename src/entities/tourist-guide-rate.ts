@@ -25,6 +25,6 @@ export class TouristGuideRate {
   @UpdateDateColumn()
   updateAt: Date;
 
-  @DeleteDateColumn()
+  @DeleteDateColumn({ select: false })
   deletedAt?: Date;
 }

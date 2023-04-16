@@ -1,38 +1,87 @@
 import { Request, Response } from "express";
-import { Repository } from "typeorm";
+import { FindManyOptions, Repository } from "typeorm";
 import { AppDataSource } from '../database/configuration/db-data-source'
 import { Trekking } from '../entities/trekking';
-import { TrekkingRequest } from "./interfaces/request/trekking-request";
+import { TrekkingRequest, TrekkingFindRequest } from "./interfaces/request/trekking-request";
 import { TrekkingDescription } from "../entities/trekking-description";
 import { TrekkingPrice } from "../entities/trekking-price";
 import { SUCCESS_STATUS_CODE, BAD_REQUEST_STATUS_CODE } from "../contracts/response-status";
 import { State } from "../entities/state";
 import { City } from "../entities/city";
 import { DifficultLevel } from "../entities/difficult-level";
+import { TrekkingFindWhereOption } from "./interfaces/repository/trekking-find";
 
 export class TrekkingController {
   private _repository: Repository<Trekking>;
+  private _findOptions: FindManyOptions = {
+    relations: {
+      state: true,
+      city: true,
+      difficultLevel: true,
+      descriptions: true,
+      images: true,
+      prices: true,
+      rates: true
+    }
+  }
 
   constructor() {
     this._repository = AppDataSource.getRepository(Trekking);
   }
 
-  async list(request: Request, response: Response) {
-    const data = await this._repository.find();
-
-    response.send(data);
-  }
-
-  async add(request: Request<TrekkingRequest>, response: Response) {
+  async create(request: Request<{}, {}, TrekkingRequest>, response: Response) {
     try {
       const trekking = this._trekkingToDomain(request.body);
       await this._repository.save(trekking);
 
       response.status(SUCCESS_STATUS_CODE).send();
     } catch(err) {
-      console.log(err)
       response.status(BAD_REQUEST_STATUS_CODE).send();
     }
+  }
+
+  async update(request: Request<{ id: string }, {}, TrekkingRequest>, response: Response) {
+    try {
+      const trekking = this._trekkingToDomain(request.body);
+      trekking.id = +request.params.id
+      await this._repository.save(trekking);
+
+      response.status(SUCCESS_STATUS_CODE).send();
+    } catch(err) {
+      response.status(BAD_REQUEST_STATUS_CODE).send();
+    }
+  }
+
+  async find(request: Request<{}, {}, {}, TrekkingFindRequest>, response: Response) {
+    const whereFilters: TrekkingFindWhereOption = {
+      name: request.query.name,
+        state: {
+          id: request.query.state
+        },
+        city: {
+          id: request.query.city
+        },
+        durationInHours: request.query.durationInHours,
+        distanceInMeters: request.query.distanceInMeters,
+        difficultLevel: {
+          id: request.query.difficultLevel
+        }
+    }
+
+    const trekkings = await this._repository.find({
+      where: whereFilters,
+      relations: this._findOptions.relations
+    });
+
+    response.send(trekkings);
+  }
+
+  async delete(request: Request<{ id: string }>, response: Response) {
+    const trekking = new Trekking();
+    trekking.id = +request.params.id
+    await this._repository.softDelete(trekking);
+
+    response.status(SUCCESS_STATUS_CODE).send();
   }
 
   private _trekkingToDomain(trekkingRequest: TrekkingRequest): Trekking {

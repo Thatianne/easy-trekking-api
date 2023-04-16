@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToOne, OneToMany, ManyToOne, CreateDateColumn, UpdateDateColumn, DeleteDateColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, JoinTable, OneToMany, ManyToOne, CreateDateColumn, UpdateDateColumn, DeleteDateColumn, ManyToMany } from 'typeorm';
 import { State } from './state';
 import { City } from './city';
 import { DifficultLevel } from './difficult-level';
@@ -6,6 +6,7 @@ import { TrekkingDescription } from './trekking-description'
 import { TrekkingImage } from './trekking-image'
 import { TrekkingPrice } from './trekking-price'
 import { TrekkingRate } from './trekking-rate'
+import { User } from './user';
 
 @Entity()
 export class Trekking {
@@ -59,6 +60,10 @@ export class Trekking {
 
   @OneToMany(() => TrekkingRate, (rate) => rate.trekking)
   rates: TrekkingRate[];
+
+  @ManyToMany(() => User)
+  @JoinTable()
+  touristGuides: User[];
 
   @CreateDateColumn()
   createdAt: Date;

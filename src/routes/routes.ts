@@ -1,11 +1,13 @@
 import { Router } from 'express';
 import { TrekkingController } from '../controllers/trekking-controller';
 import { UserAdminController } from '../controllers/user-admin-controller';
+import { UserTouristGuideController } from '../controllers/user-tourist-guide-controller';
 import { AssociationeController } from '../controllers/association-controller';
 
 const Routes = Router();
 const trekkingController = new TrekkingController();
 const userAdminControlller = new UserAdminController();
+const userTouristGuideControlller = new UserTouristGuideController();
 const associationeController = new AssociationeController();
 
 Routes.get('/trekkings', trekkingController.find.bind(trekkingController));
@@ -18,6 +20,8 @@ Routes.post('/association', associationeController.create.bind(associationeContr
 Routes.get('/association', associationeController.find.bind(associationeController));
 Routes.delete('/association/:id', associationeController.delete.bind(associationeController));
 
-Routes.post('/admin', userAdminControlller.create.bind(userAdminControlller));
+Routes.post('/tourist-guide/:id/able-to-guide', userTouristGuideControlller.defineAbleToGuideTrekkings.bind(userTouristGuideControlller));
+
+// Routes.post('/admin', userAdminControlller.create.bind(userAdminControlller));
 
 export { Routes };

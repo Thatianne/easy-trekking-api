@@ -6,7 +6,7 @@ import { Role } from '../entities/role';
 import { UserAdminRequest } from "./interfaces/request/user-admin-request";
 import { SUCCESS_STATUS_CODE, BAD_REQUEST_STATUS_CODE, NOT_FOUND_STATUS_CODE } from "../contracts/response-status";
 
-export class UserAdminController {
+export class UserTouristController {
   private _repository: Repository<User>;
 
   constructor() {

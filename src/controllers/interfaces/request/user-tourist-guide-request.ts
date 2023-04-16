@@ -5,3 +5,7 @@ export interface UserTouristGuideRequest {
     associations: number[];
     phone: string;
 }
+
+export interface DefineAbleToGuideTrekkingsRequest {
+    trekkings: number[];
+}

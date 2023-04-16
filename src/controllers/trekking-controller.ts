@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { FindManyOptions, Repository } from "typeorm";
+import { FindManyOptions, Repository, In } from "typeorm";
 import { AppDataSource } from '../database/configuration/db-data-source'
 import { Trekking } from '../entities/trekking';
 import { TrekkingRequest, TrekkingFindRequest } from "./interfaces/request/trekking-request";
@@ -54,18 +54,19 @@ export class TrekkingController {
 
   async find(request: Request<{}, {}, {}, TrekkingFindRequest>, response: Response) {
     const whereFilters: TrekkingFindWhereOption = {
+      id: In(request.query.ids.split(',').map(id => +id)),
       name: request.query.name,
-        state: {
-          id: request.query.state
-        },
-        city: {
-          id: request.query.city
-        },
-        durationInHours: request.query.durationInHours,
-        distanceInMeters: request.query.distanceInMeters,
-        difficultLevel: {
-          id: request.query.difficultLevel
-        }
+      state: {
+        id: request.query.state
+      },
+      city: {
+        id: request.query.city
+      },
+      durationInHours: request.query.durationInHours,
+      distanceInMeters: request.query.distanceInMeters,
+      difficultLevel: {
+        id: request.query.difficultLevel
+      }
     }
 
     const trekkings = await this._repository.find({

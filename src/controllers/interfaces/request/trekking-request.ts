@@ -17,6 +17,7 @@ export interface TrekkingRequest {
 }
 
 export interface TrekkingFindRequest {
+    ids: string;
     name: string
     state: number;
     city: number;

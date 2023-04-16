@@ -29,11 +29,20 @@ export class AssociationeController {
     response.status(SUCCESS_STATUS_CODE).send(associations);
   }
 
+  async delete(request: Request<{ id: string }>, response: Response) {
+    const association = new Association();
+    association.id = +request.params.id
+    await this._repository.delete(association);
+
+    response.status(SUCCESS_STATUS_CODE).send();
+  }
+
   private _associationToDomain(userAdminRequest: AssociationRequest): Association {
     const association = new Association();
     association.value = userAdminRequest.name;
 
     return association;
   }
+
 
 }

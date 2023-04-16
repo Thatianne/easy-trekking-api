@@ -16,6 +16,7 @@ Routes.delete('/trekkings/:id', trekkingController.delete.bind(trekkingControlle
 
 Routes.post('/association', associationeController.create.bind(associationeController));
 Routes.get('/association', associationeController.find.bind(associationeController));
+Routes.delete('/association/:id', associationeController.delete.bind(associationeController));
 
 Routes.post('/admin', userAdminControlller.create.bind(userAdminControlller));
 

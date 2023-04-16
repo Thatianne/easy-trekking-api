@@ -4,7 +4,7 @@ dotenv.config();
 import express from 'express';
 import serverless from 'serverless-http';
 import 'reflect-metadata';
-import { AdminRoute, TouristGuideRoute, TouristRoute } from './routes';
+import { Routes } from './routes';
 import { AppDataSource } from './database/configuration/db-data-source'
 
 const app = express();
@@ -15,9 +15,7 @@ app.use(express.json())
 AppDataSource.initialize()
     .then(() => {
         // Routes
-        app.use('/admin', AdminRoute);
-        app.use('/tourist-guide', TouristGuideRoute);
-        app.use('/', TouristRoute);
+        app.use('/', Routes);
     });
 
 app.listen(3333, () => 'server running on port 3333') // for local

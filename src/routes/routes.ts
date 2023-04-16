@@ -20,6 +20,7 @@ Routes.post('/association', associationeController.create.bind(associationeContr
 Routes.get('/association', associationeController.find.bind(associationeController));
 Routes.delete('/association/:id', associationeController.delete.bind(associationeController));
 
+Routes.post('/tourist-guide', userTouristGuideControlller.create.bind(userTouristGuideControlller));
 Routes.post('/tourist-guide/:id/able-to-guide', userTouristGuideControlller.defineAbleToGuideTrekkings.bind(userTouristGuideControlller));
 Routes.get('/tourist-guide/:id/able-to-guide', userTouristGuideControlller.listAbleToGuideTrekkings.bind(userTouristGuideControlller));
 

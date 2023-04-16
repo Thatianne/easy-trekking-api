@@ -61,8 +61,9 @@ export class UserTouristGuideController {
   private _userTouristGuideToDomain(userAdminRequest: UserTouristGuideRequest): User {
     const user = new User();
 
-    user.name = userAdminRequest.email;
+    user.name = userAdminRequest.name;
     user.email = userAdminRequest.email;
+    user.phone = userAdminRequest.phone;
     user.password = userAdminRequest.password; // TODO encrypt password
     user.role = this._touristGuideRoleToDomain();
 

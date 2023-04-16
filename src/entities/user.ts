@@ -19,7 +19,7 @@ export class User {
   password: string;
 
   @Column()
-  phone: number;
+  phone: string;
 
   @ManyToOne(() => Role)
   role: Role;

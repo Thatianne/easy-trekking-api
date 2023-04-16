@@ -41,6 +41,23 @@ export class UserTouristGuideController {
     response.status(SUCCESS_STATUS_CODE).send();
   }
 
+  async listAbleToGuideTrekkings(request: Request<{ id: string }>, response: Response) {
+    const users = await this._repository.find({
+      where: {
+        id: +request.params.id
+      },
+      relations: {
+        trekkings: true
+      }
+    });
+
+    if (users.length === 0) {
+      return response.status(NOT_FOUND_STATUS_CODE).send()
+    }
+
+    response.status(SUCCESS_STATUS_CODE).send(users[0].trekkings);
+  }
+
   private _userTouristGuideToDomain(userAdminRequest: UserTouristGuideRequest): User {
     const user = new User();
 

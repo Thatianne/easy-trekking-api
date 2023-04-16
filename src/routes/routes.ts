@@ -21,6 +21,7 @@ Routes.get('/association', associationeController.find.bind(associationeControll
 Routes.delete('/association/:id', associationeController.delete.bind(associationeController));
 
 Routes.post('/tourist-guide/:id/able-to-guide', userTouristGuideControlller.defineAbleToGuideTrekkings.bind(userTouristGuideControlller));
+Routes.get('/tourist-guide/:id/able-to-guide', userTouristGuideControlller.listAbleToGuideTrekkings.bind(userTouristGuideControlller));
 
 // Routes.post('/admin', userAdminControlller.create.bind(userAdminControlller));
 

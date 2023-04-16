@@ -1,5 +1,3 @@
-import { PriceDataRequest } from "./price-data-request";
-
 export interface TrekkingRequest {
     name: string;
     start: string;
@@ -29,4 +27,10 @@ export interface TrekkingFindRequest {
 
 export interface TrekkingDeleteRequest {
     id: string
+}
+
+interface PriceDataRequest {
+    startDate: string, // date.toISOString()
+    endDate: string,
+    price: number
 }

@@ -5,7 +5,7 @@ import { Trekking } from '../entities/trekking';
 import { TrekkingRequest, TrekkingFindRequest } from "./interfaces/request/trekking-request";
 import { TrekkingDescription } from "../entities/trekking-description";
 import { TrekkingPrice } from "../entities/trekking-price";
-import { SUCCESS_STATUS_CODE, BAD_REQUEST_STATUS_CODE } from "../contracts/response-status";
+import { SUCCESS_STATUS_CODE, BAD_REQUEST_STATUS_CODE, NOT_FOUND_STATUS_CODE } from "../contracts/response-status";
 import { State } from "../entities/state";
 import { City } from "../entities/city";
 import { DifficultLevel } from "../entities/difficult-level";
@@ -73,7 +73,22 @@ export class TrekkingController {
       relations: this._findOptions.relations
     });
 
-    response.send(trekkings);
+    response.status(SUCCESS_STATUS_CODE).send(trekkings);
+  }
+
+  async findById(request: Request<{ id: string }>, response: Response) {
+    const trekkings = await this._repository.find({
+      where: {
+        id: +request.params.id
+      },
+      relations: this._findOptions.relations
+    });
+
+    if (trekkings.length === 0) {
+      return response.status(NOT_FOUND_STATUS_CODE).send()
+    }
+
+    response.status(SUCCESS_STATUS_CODE).send(trekkings[0]);
   }
 
   async delete(request: Request<{ id: string }>, response: Response) {

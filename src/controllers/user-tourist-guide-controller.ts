@@ -58,13 +58,13 @@ export class UserTouristGuideController {
     response.status(SUCCESS_STATUS_CODE).send(users[0].trekkings);
   }
 
-  private _userTouristGuideToDomain(userAdminRequest: UserTouristGuideRequest): User {
+  private _userTouristGuideToDomain(userTouristGuideRequest: UserTouristGuideRequest): User {
     const user = new User();
 
-    user.name = userAdminRequest.name;
-    user.email = userAdminRequest.email;
-    user.phone = userAdminRequest.phone;
-    user.password = userAdminRequest.password; // TODO encrypt password
+    user.name = userTouristGuideRequest.name;
+    user.email = userTouristGuideRequest.email;
+    user.phone = userTouristGuideRequest.phone;
+    user.password = userTouristGuideRequest.password; // TODO encrypt password
     user.role = this._touristGuideRoleToDomain();
 
     return user;

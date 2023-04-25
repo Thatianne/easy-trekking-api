@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToOne, JoinColumn, CreateDateColumn, UpdateDateColumn, DeleteDateColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToOne, ManyToOne, ManyToMany, JoinColumn, CreateDateColumn, UpdateDateColumn, DeleteDateColumn } from 'typeorm';
 import { Trekking } from './trekking';
 import { GroupStatus } from './group-status';
 import { User } from './user';
@@ -8,26 +8,23 @@ export class Group {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @OneToOne(() => Trekking)
+  @Column()
+  name: string;
+
+  @ManyToOne(() => Trekking, (trekking) => trekking.id)
   trekking: Trekking;
 
-  @OneToOne(() => GroupStatus)
+  @ManyToOne(() => GroupStatus)
   groupStatus: GroupStatus;
 
   @OneToOne(() => User)
   touristGuideUser: User;
 
-  @Column()
-  name: string;
+  @ManyToMany(() => User)
+  tourists: User[];
 
   @Column()
-  email: string;
-
-  @Column()
-  password: number;
-
-  @Column()
-  phone: number;
+  date: Date;
 
   @CreateDateColumn()
   createdAt: Date;

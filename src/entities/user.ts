@@ -3,6 +3,7 @@ import { Role } from './role';
 import { Association } from './association';
 import { UserDocument } from './user-document';
 import { Trekking } from './trekking';
+import { Group } from './group';
 
 @Entity()
 export class User {
@@ -31,6 +32,10 @@ export class User {
   @ManyToMany(() => Trekking)
   @JoinTable()
   trekkings: Trekking[];
+
+  @ManyToMany(() => Group)
+  @JoinTable()
+  groups: Group[];
 
   @OneToMany(() => UserDocument, (userDocument) => userDocument.user, { cascade: true })
   documents: UserDocument[]

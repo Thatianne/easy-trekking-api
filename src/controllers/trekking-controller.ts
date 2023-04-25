@@ -1,18 +1,20 @@
 import { Request, Response } from "express";
-import { FindManyOptions, Repository, In } from "typeorm";
+import { FindManyOptions, Repository, In, Between } from "typeorm";
 import { AppDataSource } from '../database/configuration/db-data-source'
 import { Trekking } from '../entities/trekking';
-import { TrekkingRequest, TrekkingFindRequest } from "./interfaces/request/trekking-request";
+import { TrekkingRequest, TrekkingFindRequest, SubscribeTrekkingRequest } from "./interfaces/request/trekking-request";
 import { TrekkingDescription } from "../entities/trekking-description";
 import { TrekkingPrice } from "../entities/trekking-price";
 import { SUCCESS_STATUS_CODE, BAD_REQUEST_STATUS_CODE, NOT_FOUND_STATUS_CODE } from "../contracts/response-status";
 import { State } from "../entities/state";
 import { City } from "../entities/city";
+import { Group } from "../entities/group";
 import { DifficultLevel } from "../entities/difficult-level";
 import { TrekkingFindWhereOption } from "./interfaces/repository/trekking-find";
 
 export class TrekkingController {
   private _repository: Repository<Trekking>;
+  private _groupRepository: Repository<Group>;
   private _findOptions: FindManyOptions = {
     relations: {
       state: true,
@@ -27,6 +29,7 @@ export class TrekkingController {
 
   constructor() {
     this._repository = AppDataSource.getRepository(Trekking);
+    this._groupRepository = AppDataSource.getRepository(Group);
   }
 
   async create(request: Request<{}, {}, TrekkingRequest>, response: Response) {
@@ -54,7 +57,6 @@ export class TrekkingController {
 
   async find(request: Request<{}, {}, {}, TrekkingFindRequest>, response: Response) {
     const whereFilters: TrekkingFindWhereOption = {
-      id: In(request.query.ids.split(',').map(id => +id)),
       name: request.query.name,
       state: {
         id: request.query.state
@@ -67,6 +69,10 @@ export class TrekkingController {
       difficultLevel: {
         id: request.query.difficultLevel
       }
+    }
+
+    if (request.query.ids) {
+      whereFilters.id = In(request.query.ids.split(',').map(id => +id));
     }
 
     const trekkings = await this._repository.find({
@@ -98,6 +104,31 @@ export class TrekkingController {
     await this._repository.softDelete(trekking);
 
     response.status(SUCCESS_STATUS_CODE).send();
+  }
+
+  async subscribe(request: Request<{ id: string }, {}, {}, SubscribeTrekkingRequest>, response: Response) {
+    // Group exist ?
+    const date = new Date(request.query.date);
+
+    const groups = await this._groupRepository.find({
+      where: {
+        date: Between(
+          new Date(date.getFullYear(), date.getMonth(), date.getDate()),
+          new Date(date.getFullYear(), date.getMonth(), date.getDate(), 23, 59, 59),
+        ),
+        trekking: {
+          id: +request.params.id
+        }
+      },
+      // relations: this._findOptions.relations
+    });
+
+    console.log(groups);
+    // if (groups.length === 0 || )
+  }
+
+  private _groupIsFull(): boolean {
+    return false
   }
 
   private _trekkingToDomain(trekkingRequest: TrekkingRequest): Trekking {

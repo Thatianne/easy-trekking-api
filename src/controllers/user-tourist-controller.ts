@@ -3,7 +3,7 @@ import { Repository } from 'typeorm';
 import { AppDataSource } from '../database/configuration/db-data-source';
 import { User } from '../entities/user';
 import { Role } from '../entities/role';
-import { UserAdminRequest } from "./interfaces/request/user-admin-request";
+import { UserTouristRequest } from "./interfaces/request/user-tourist-request";
 import { SUCCESS_STATUS_CODE, BAD_REQUEST_STATUS_CODE, NOT_FOUND_STATUS_CODE } from "../contracts/response-status";
 
 export class UserTouristController {
@@ -13,9 +13,9 @@ export class UserTouristController {
     this._repository = AppDataSource.getRepository(User);
   }
 
-  async create(request: Request<{}, {}, UserAdminRequest>, response: Response) {
+  async create(request: Request<{}, {}, UserTouristRequest>, response: Response) {
     try {
-      const userAdmin = this._userAdminToDomain(request.body);
+      const userAdmin = this._userTouristToDomain(request.body);
       await this._repository.save(userAdmin);
 
       response.status(SUCCESS_STATUS_CODE).send();
@@ -24,20 +24,21 @@ export class UserTouristController {
     }
   }
 
-  private _userAdminToDomain(userAdminRequest: UserAdminRequest): User {
+  private _userTouristToDomain(userTouristRequest: UserTouristRequest): User {
     const user = new User();
 
-    user.name = userAdminRequest.email;
-    user.email = userAdminRequest.email;
-    user.password = userAdminRequest.password; // TODO encrypt password
-    user.role = this._adminRoleToDomain();
+    user.name = userTouristRequest.name;
+    user.email = userTouristRequest.email;
+    user.phone = userTouristRequest.phone;
+    user.password = userTouristRequest.password; // TODO encrypt password
+    user.role = this._touristRoleToDomain();
 
     return user;
   }
 
-  private _adminRoleToDomain(): Role {
+  private _touristRoleToDomain(): Role {
     const role = new Role();
-    role.id = 1;
+    role.id = 3;
 
     return role;
   }

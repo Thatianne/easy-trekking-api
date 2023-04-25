@@ -35,3 +35,8 @@ interface PriceDataRequest {
     endDate: string,
     price: number
 }
+
+export interface SubscribeTrekkingRequest {
+  userId: number;
+  date: string;
+}

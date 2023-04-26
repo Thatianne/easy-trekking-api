@@ -37,6 +37,15 @@ interface PriceDataRequest {
 }
 
 export interface SubscribeTrekkingRequest {
-  userId: number;
+  userId: number; // TODO Use from authenticated user
   date: string;
+}
+
+export interface DefineAbleToGuideTrekkingsRequest {
+    trekkings: number[];
+    userId: number; // TODO Use from authenticated user
+}
+
+export interface GetAbleToGuideTrekkingsRequest {
+    userId: number; // TODO Use from authenticated user
 }

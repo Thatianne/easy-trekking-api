@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToOne, CreateDateColumn, UpdateDateColumn, DeleteDateColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn, UpdateDateColumn, DeleteDateColumn } from 'typeorm';
 import { Group } from './group';
 import { User } from './user';
 import { PaymentStatus } from './payment-status';
@@ -8,21 +8,21 @@ export class TouristUserGroup {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @OneToOne(() => Group)
-  group_id: Group;
+  @ManyToOne(() => Group)
+  group: Group;
 
-  @OneToOne(() => User)
-  user_id: User;
+  @ManyToOne(() => User)
+  user: User;
 
-  @OneToOne(() => PaymentStatus)
-  paymentStatusId: PaymentStatus;
+  @ManyToOne(() => PaymentStatus)
+  paymentStatus: PaymentStatus;
 
   @CreateDateColumn()
-  created_at: Date;
+  createdAt: Date;
 
   @UpdateDateColumn()
-  updated_at: Date;
+  updatedAt: Date;
 
   @DeleteDateColumn({ select: false })
-  deleted_at?: Date;
+  deletedAt?: Date;
 }

@@ -2,6 +2,7 @@ import { Entity, PrimaryGeneratedColumn, Column, OneToOne, ManyToOne, ManyToMany
 import { Trekking } from './trekking';
 import { GroupStatus } from './group-status';
 import { User } from './user';
+import { TouristUserGroup } from './tourist-user-group';
 
 @Entity()
 export class Group {
@@ -20,8 +21,8 @@ export class Group {
   @OneToOne(() => User)
   touristGuideUser: User;
 
-  @ManyToMany(() => User)
-  tourists: User[];
+  @ManyToMany(() => TouristUserGroup)
+  tourists: TouristUserGroup[];
 
   @Column()
   date: Date;

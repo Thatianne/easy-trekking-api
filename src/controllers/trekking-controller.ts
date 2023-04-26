@@ -2,13 +2,14 @@ import { Request, Response } from "express";
 import { FindManyOptions, Repository, In, Between } from "typeorm";
 import { AppDataSource } from '../database/configuration/db-data-source'
 import { Trekking } from '../entities/trekking';
-import { TrekkingRequest, TrekkingFindRequest, SubscribeTrekkingRequest } from "./interfaces/request/trekking-request";
+import { TrekkingRequest, TrekkingFindRequest, SubscribeTrekkingRequest, DefineAbleToGuideTrekkingsRequest, GetAbleToGuideTrekkingsRequest } from "./interfaces/request/trekking-request";
 import { TrekkingDescription } from "../entities/trekking-description";
 import { TrekkingPrice } from "../entities/trekking-price";
 import { SUCCESS_STATUS_CODE, BAD_REQUEST_STATUS_CODE, NOT_FOUND_STATUS_CODE } from "../contracts/response-status";
 import { State } from "../entities/state";
 import { City } from "../entities/city";
 import { Group } from "../entities/group";
+import { User } from "../entities/user";
 import { DifficultLevel } from "../entities/difficult-level";
 import { TrekkingFindWhereOption } from "./interfaces/repository/trekking-find";
 
@@ -106,9 +107,47 @@ export class TrekkingController {
     response.status(SUCCESS_STATUS_CODE).send();
   }
 
-  async subscribe(request: Request<{ id: string }, {}, {}, SubscribeTrekkingRequest>, response: Response) {
-    // Group exist ?
-    const date = new Date(request.query.date);
+  async defineAbleToGuideTrekkings(request: Request<{}, {}, DefineAbleToGuideTrekkingsRequest>, response: Response) {
+    request.body.trekkings.forEach((trekkingId) => {
+      const trekking = new Trekking();
+      trekking.id = +trekkingId;
+
+      const touristGuide = new User();
+      touristGuide.id = +request.body.userId
+      trekking.touristGuides = [touristGuide];
+
+      this._repository.save(trekking);
+    });
+
+    response.status(SUCCESS_STATUS_CODE).send();
+  }
+
+  async listAbleToGuideTrekkings(request: Request<{}, {}, GetAbleToGuideTrekkingsRequest>, response: Response) {
+    const trekkings = await this._repository.find({
+      where: {
+        touristGuides: {
+          id: +request.body.userId
+        }
+      },
+      relations: this._findOptions.relations
+    });
+
+    response.status(SUCCESS_STATUS_CODE).send(trekkings);
+  }
+
+  async subscribe(request: Request<{ id: string }, {}, SubscribeTrekkingRequest>, response: Response) {
+    const trekkings = await this._repository.find({
+      where: {
+        id: +request.params.id
+      }
+    });
+
+    if (trekkings.length === 0) {
+      console.error('Trekking not found');
+      response.status(NOT_FOUND_STATUS_CODE);
+    }
+
+    const date = new Date(request.body.date);
 
     const groups = await this._groupRepository.find({
       where: {
@@ -120,15 +159,46 @@ export class TrekkingController {
           id: +request.params.id
         }
       },
-      // relations: this._findOptions.relations
     });
 
-    console.log(groups);
-    // if (groups.length === 0 || )
+    const trekking = trekkings[0];
+
+    const availableGroups = groups.filter((group) => !this._groupIsFull(group, trekking));
+
+    let group: Group;
+
+    if (availableGroups.length === 0) {
+      const groupToCreate = this._groupToDomain(request.body, trekking);
+      group = await this._groupRepository.save(groupToCreate);
+    } else {
+      group = groups[0];
+    }
+
+    response.status(SUCCESS_STATUS_CODE).send(groups)
   }
 
-  private _groupIsFull(): boolean {
-    return false
+  private _groupIsFull(group: Group, trekking: Trekking): boolean {
+    return group.tourists.length === trekking.maxPeople;
+  }
+
+  private _groupToDomain(subscribeTrekkingRequest: SubscribeTrekkingRequest, trekking: Trekking): Group {
+    const entity = new Group();
+
+    entity.name = `${trekking.name}-${this._generateRandomString(10)}`;
+    entity.date = new Date(subscribeTrekkingRequest.date);
+    return entity;
+  }
+
+  private _generateRandomString(length: number) {
+    let result = '';
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    const charactersLength = characters.length;
+    let counter = 0;
+    while (counter < length) {
+      result += characters.charAt(Math.floor(Math.random() * charactersLength));
+      counter += 1;
+    }
+    return result;
   }
 
   private _trekkingToDomain(trekkingRequest: TrekkingRequest): Trekking {

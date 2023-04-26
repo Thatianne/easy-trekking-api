@@ -7,10 +7,6 @@ export interface UserTouristGuideRequest {
     phone: string;
 }
 
-export interface DefineAbleToGuideTrekkingsRequest {
-    trekkings: number[];
-}
-
 interface document {
   type: number;
   value: string;

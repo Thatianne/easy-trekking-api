@@ -226,7 +226,7 @@ export class TrekkingController {
         }
       });
     } else {
-      group = groups[0];
+      group = availableGroups[0];
     }
     group.trekking = trekking;
 

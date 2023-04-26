@@ -12,6 +12,9 @@ export class Group {
   @Column()
   name: string;
 
+  @Column()
+  date: Date;
+
   @ManyToOne(() => Trekking, (trekking) => trekking.id)
   trekking: Trekking;
 
@@ -23,9 +26,6 @@ export class Group {
 
   @ManyToMany(() => TouristUserGroup)
   tourists: TouristUserGroup[];
-
-  @Column()
-  date: Date;
 
   @CreateDateColumn()
   createdAt: Date;

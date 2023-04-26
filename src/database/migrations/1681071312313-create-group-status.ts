@@ -13,8 +13,8 @@ export class createGroupStatus1681071312313 implements MigrationInterface {
             { value: 'waiting_tourist'},
             { value: 'waiting_tourist_guide'},
             { value: 'confirmed'},
-            { value: 'fulfilled'},
-            { value: 'canceled'}
+            { value: 'canceled'},
+            { value: 'done'}
         ])
         .execute();
     }

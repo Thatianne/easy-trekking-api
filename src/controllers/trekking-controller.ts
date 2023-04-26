@@ -210,7 +210,7 @@ export class TrekkingController {
       }
     });
 
-    const availableGroups = groups.filter((group) => !this._groupIsFull(group, trekking));
+    const availableGroups = groups.filter(async (group) => !(await this._groupIsFull(group, trekking)));
 
     let group: Group;
 
@@ -240,7 +240,7 @@ export class TrekkingController {
             id: group.id
           }
         }
-      })
+      });
 
       if (!existingTouristUserGroup) {
         const touristUserGroup = new TouristUserGroup();
@@ -259,8 +259,16 @@ export class TrekkingController {
     response.status(NOT_FOUND_STATUS_CODE).send();
   }
 
-  private _groupIsFull(group: Group, trekking: Trekking): boolean {
-    return group.groupStatus.id === GroupStatusEnum.Fulfilled;
+  private async _groupIsFull(group: Group, trekking: Trekking): Promise<boolean> {
+    const touristUserGroupCount = await this._touristUserGroupRepository.count({
+      where: {
+        group: {
+          id: group.id
+        }
+      }
+    });
+
+    return touristUserGroupCount === trekking.maxPeople;
   }
 
   private _groupToDomain(subscribeTrekkingRequest: SubscribeTrekkingRequest, trekking: Trekking): Group {

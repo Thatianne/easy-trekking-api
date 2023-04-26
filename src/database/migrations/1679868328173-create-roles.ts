@@ -10,7 +10,7 @@ export class createRoles1679868328173 implements MigrationInterface {
         .insert()
         .into(Role)
         .values([
-          { value: 'administrador'},
+          { value: 'administrator'},
           { value: 'tourist_guide'},
           { value: 'tourist'}
         ])
@@ -20,7 +20,7 @@ export class createRoles1679868328173 implements MigrationInterface {
     // TODO test rollback
     public async down(queryRunner: QueryRunner): Promise<void> {
       queryRunner.manager.delete(Role, [
-        { value: 'administrador'},
+        { value: 'administrator'},
         { value: 'tourist_guide'},
         { value: 'tourist'}
       ]);

@@ -15,7 +15,7 @@ export class Group {
   @ManyToOne(() => Trekking, (trekking) => trekking.id)
   trekking: Trekking;
 
-  @ManyToOne(() => GroupStatus)
+  @ManyToOne(() => GroupStatus, (groupStatus) => groupStatus.id)
   groupStatus: GroupStatus;
 
   @OneToOne(() => User)

@@ -12,6 +12,11 @@ import { Group } from "../entities/group";
 import { TouristUserGroup } from "../entities/tourist-user-group";
 import { User } from "../entities/user";
 import { DifficultLevel } from "../entities/difficult-level";
+import { PaymentStatus } from "../entities/payment-status";
+import { GroupStatus } from "../entities/group-status";
+import { RoleEnum } from '../enums/role.enum'
+import { PaymentStatusEnum } from '../enums/payment-status.enum'
+import { GroupStatusEnum } from '../enums/group-status.enum'
 import { TrekkingFindWhereOption } from "./interfaces/repository/trekking-find";
 
 export class TrekkingController {
@@ -113,6 +118,25 @@ export class TrekkingController {
   }
 
   async defineAbleToGuideTrekkings(request: Request<{}, {}, DefineAbleToGuideTrekkingsRequest>, response: Response) {
+    const user = await this._userRepository.findOne({
+      where: {
+        id: +request.body.userId
+      },
+      relations: {
+        role: true
+      }
+    });
+
+    if (!user) {
+      console.error('User not found');
+      return response.status(NOT_FOUND_STATUS_CODE).send();
+    }
+
+    if (user.role.id !== RoleEnum.TouristGuide) {
+      console.error('User should be a tourist guide');
+      return response.status(BAD_REQUEST_STATUS_CODE).send();
+    }
+
     request.body.trekkings.forEach((trekkingId) => {
       const trekking = new Trekking();
       trekking.id = +trekkingId;
@@ -147,16 +171,26 @@ export class TrekkingController {
 
     if (!trekking){
       console.error('Trekking not found');
-      return response.status(NOT_FOUND_STATUS_CODE);
+      return response.status(NOT_FOUND_STATUS_CODE).send();
     }
 
-    const user = await this._userRepository.findOneBy({
-      id: +request.body.userId
+    const user = await this._userRepository.findOne({
+      where: {
+        id: +request.body.userId
+      },
+      relations: {
+        role: true
+      }
     });
 
     if (!user) {
       console.error('User not found');
-      return response.status(NOT_FOUND_STATUS_CODE);
+      return response.status(NOT_FOUND_STATUS_CODE).send();
+    }
+
+    if (user.role.id !== RoleEnum.Tourist) {
+      console.error('User should be a tourist');
+      return response.status(BAD_REQUEST_STATUS_CODE).send();
     }
 
     const date = new Date(request.body.date);
@@ -171,6 +205,9 @@ export class TrekkingController {
           id: +request.params.id
         }
       },
+      relations: {
+        groupStatus: true
+      }
     });
 
     const availableGroups = groups.filter((group) => !this._groupIsFull(group, trekking));
@@ -179,18 +216,42 @@ export class TrekkingController {
 
     if (availableGroups.length === 0) {
       const groupToCreate = this._groupToDomain(request.body, trekking);
-      group = await this._groupRepository.save(groupToCreate);
+      const addedGroup = await this._groupRepository.save(groupToCreate);
+      group = await this._groupRepository.findOneOrFail({
+        where: {
+          id: +addedGroup.id
+        },
+        relations: {
+          groupStatus: true
+        }
+      });
     } else {
       group = groups[0];
     }
     group.trekking = trekking;
 
     if (user) {
-      const touristUserGroup = new TouristUserGroup();
-      touristUserGroup.group = group;
-      touristUserGroup.user = user;
+      const existingTouristUserGroup = await this._touristUserGroupRepository.findOne({
+        where: {
+          user: {
+            id: user.id
+          },
+          group: {
+            id: group.id
+          }
+        }
+      })
 
-      await this._touristUserGroupRepository.save(touristUserGroup);
+      if (!existingTouristUserGroup) {
+        const touristUserGroup = new TouristUserGroup();
+        touristUserGroup.group = group;
+        touristUserGroup.user = user;
+        const paymentStatus = new PaymentStatus();
+        paymentStatus.id = PaymentStatusEnum.Total; // Ignore payment for first version
+        touristUserGroup.paymentStatus = paymentStatus;
+
+        await this._touristUserGroupRepository.save(touristUserGroup);
+      }
 
       response.status(SUCCESS_STATUS_CODE).send(group);
     }
@@ -199,15 +260,18 @@ export class TrekkingController {
   }
 
   private _groupIsFull(group: Group, trekking: Trekking): boolean {
-    return group.tourists.length === trekking.maxPeople;
+    return group.groupStatus.id === GroupStatusEnum.Fulfilled;
   }
 
   private _groupToDomain(subscribeTrekkingRequest: SubscribeTrekkingRequest, trekking: Trekking): Group {
     const entity = new Group();
+    const groupStatus = new GroupStatus()
+    groupStatus.id = GroupStatusEnum.WaitingTourist;
 
     entity.name = `${trekking.name}-${this._generateRandomString(10)}`;
     entity.date = new Date(subscribeTrekkingRequest.date);
     entity.trekking = trekking;
+    entity.groupStatus = groupStatus;
     return entity;
   }
 

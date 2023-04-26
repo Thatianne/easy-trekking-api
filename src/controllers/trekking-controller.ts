@@ -9,13 +9,16 @@ import { SUCCESS_STATUS_CODE, BAD_REQUEST_STATUS_CODE, NOT_FOUND_STATUS_CODE } f
 import { State } from "../entities/state";
 import { City } from "../entities/city";
 import { Group } from "../entities/group";
+import { TouristUserGroup } from "../entities/tourist-user-group";
 import { User } from "../entities/user";
 import { DifficultLevel } from "../entities/difficult-level";
 import { TrekkingFindWhereOption } from "./interfaces/repository/trekking-find";
 
 export class TrekkingController {
   private _repository: Repository<Trekking>;
+  private _userRepository: Repository<User>;
   private _groupRepository: Repository<Group>;
+  private _touristUserGroupRepository: Repository<TouristUserGroup>;
   private _findOptions: FindManyOptions = {
     relations: {
       state: true,
@@ -30,7 +33,9 @@ export class TrekkingController {
 
   constructor() {
     this._repository = AppDataSource.getRepository(Trekking);
+    this._userRepository = AppDataSource.getRepository(User);
     this._groupRepository = AppDataSource.getRepository(Group);
+    this._touristUserGroupRepository = AppDataSource.getRepository(TouristUserGroup);
   }
 
   async create(request: Request<{}, {}, TrekkingRequest>, response: Response) {
@@ -136,15 +141,22 @@ export class TrekkingController {
   }
 
   async subscribe(request: Request<{ id: string }, {}, SubscribeTrekkingRequest>, response: Response) {
-    const trekkings = await this._repository.find({
-      where: {
-        id: +request.params.id
-      }
+    const trekking = await this._repository.findOneBy({
+      id: +request.params.id
     });
 
-    if (trekkings.length === 0) {
+    if (!trekking){
       console.error('Trekking not found');
-      response.status(NOT_FOUND_STATUS_CODE);
+      return response.status(NOT_FOUND_STATUS_CODE);
+    }
+
+    const user = await this._userRepository.findOneBy({
+      id: +request.body.userId
+    });
+
+    if (!user) {
+      console.error('User not found');
+      return response.status(NOT_FOUND_STATUS_CODE);
     }
 
     const date = new Date(request.body.date);
@@ -161,8 +173,6 @@ export class TrekkingController {
       },
     });
 
-    const trekking = trekkings[0];
-
     const availableGroups = groups.filter((group) => !this._groupIsFull(group, trekking));
 
     let group: Group;
@@ -173,8 +183,19 @@ export class TrekkingController {
     } else {
       group = groups[0];
     }
+    group.trekking = trekking;
 
-    response.status(SUCCESS_STATUS_CODE).send(groups)
+    if (user) {
+      const touristUserGroup = new TouristUserGroup();
+      touristUserGroup.group = group;
+      touristUserGroup.user = user;
+
+      await this._touristUserGroupRepository.save(touristUserGroup);
+
+      response.status(SUCCESS_STATUS_CODE).send(group);
+    }
+
+    response.status(NOT_FOUND_STATUS_CODE).send();
   }
 
   private _groupIsFull(group: Group, trekking: Trekking): boolean {
@@ -186,6 +207,7 @@ export class TrekkingController {
 
     entity.name = `${trekking.name}-${this._generateRandomString(10)}`;
     entity.date = new Date(subscribeTrekkingRequest.date);
+    entity.trekking = trekking;
     return entity;
   }
 

@@ -15,6 +15,9 @@ export class Group {
   @Column()
   date: Date;
 
+  @ManyToOne(() => User)
+  lastTouristGuideInvited: User
+
   @ManyToOne(() => Trekking, (trekking) => trekking.id)
   trekking: Trekking;
 

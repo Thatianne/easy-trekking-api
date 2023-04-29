@@ -6,7 +6,7 @@ import { TrekkingDescription } from './trekking-description'
 import { TrekkingImage } from './trekking-image'
 import { TrekkingPrice } from './trekking-price'
 import { TrekkingRate } from './trekking-rate'
-import { Group } from './group' 
+import { Group } from './group'
 import { User } from './user';
 
 @Entity()
@@ -45,6 +45,7 @@ export class Trekking {
   images: TrekkingImage[];
 
   @OneToMany(() => TrekkingPrice, (price) => price.trekking, { cascade: true })
+
   prices: TrekkingPrice[];
 
   @Column()
@@ -63,7 +64,7 @@ export class Trekking {
   rates: TrekkingRate[];
 
   @OneToMany(() => Group, (group) => group.trekking)
-  groups: TrekkingRate[];
+  groups: Group[];
 
   @ManyToMany(() => User)
   @JoinTable()

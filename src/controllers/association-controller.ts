@@ -5,7 +5,7 @@ import { Association } from '../entities/association';
 import { SUCCESS_STATUS_CODE, BAD_REQUEST_STATUS_CODE, NOT_FOUND_STATUS_CODE } from "../contracts/response-status";
 import { AssociationRequest } from "./interfaces/request/association-request";
 
-export class AssociationeController {
+export class AssociationController {
   private _repository: Repository<Association>;
 
   constructor() {

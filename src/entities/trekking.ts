@@ -1,12 +1,23 @@
-import { Entity, PrimaryGeneratedColumn, Column, JoinTable, OneToMany, ManyToOne, CreateDateColumn, UpdateDateColumn, DeleteDateColumn, ManyToMany } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  JoinTable,
+  OneToMany,
+  ManyToOne,
+  CreateDateColumn,
+  UpdateDateColumn,
+  DeleteDateColumn,
+  ManyToMany
+} from 'typeorm';
 import { State } from './state';
 import { City } from './city';
 import { DifficultLevel } from './difficult-level';
-import { TrekkingDescription } from './trekking-description'
-import { TrekkingImage } from './trekking-image'
-import { TrekkingPrice } from './trekking-price'
-import { TrekkingRate } from './trekking-rate'
-import { Group } from './group'
+import { TrekkingDescription } from './trekking-description';
+import { TrekkingImage } from './trekking-image';
+import { TrekkingPrice } from './trekking-price';
+import { TrekkingRate } from './trekking-rate';
+import { Group } from './group';
 import { User } from './user';
 
 @Entity()
@@ -38,14 +49,15 @@ export class Trekking {
   @ManyToOne(() => DifficultLevel)
   difficultLevel: DifficultLevel;
 
-  @OneToMany(() => TrekkingDescription, (description) => description.trekking, { cascade: true })
+  @OneToMany(() => TrekkingDescription, (description) => description.trekking, {
+    cascade: true
+  })
   descriptions: TrekkingDescription[];
 
   @OneToMany(() => TrekkingImage, (image) => image.trekking, { cascade: true })
   images: TrekkingImage[];
 
   @OneToMany(() => TrekkingPrice, (price) => price.trekking, { cascade: true })
-
   prices: TrekkingPrice[];
 
   @Column()
@@ -78,5 +90,4 @@ export class Trekking {
 
   @DeleteDateColumn({ select: false })
   deletedAt?: Date;
-
 }

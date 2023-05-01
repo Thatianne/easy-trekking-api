@@ -1,9 +1,9 @@
 export interface UserTouristRequest {
-    name: string;
-    email: string;
-    password: string;
-    documents: document[];
-    phone: string;
+  name: string;
+  email: string;
+  password: string;
+  documents: document[];
+  phone: string;
 }
 
 interface document {

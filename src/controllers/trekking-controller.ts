@@ -1,23 +1,33 @@
-import { Request, Response } from "express";
-import { FindManyOptions, Repository, In, Between } from "typeorm";
-import { AppDataSource } from '../database/configuration/db-data-source'
+import { Request, Response } from 'express';
+import { FindManyOptions, Repository, In, Between } from 'typeorm';
+import { AppDataSource } from '../database/configuration/db-data-source';
 import { Trekking } from '../entities/trekking';
-import { TrekkingRequest, TrekkingFindRequest, SubscribeTrekkingRequest, DefineAbleToGuideTrekkingsRequest, GetAbleToGuideTrekkingsRequest } from "./interfaces/request/trekking-request";
-import { TrekkingDescription } from "../entities/trekking-description";
-import { TrekkingPrice } from "../entities/trekking-price";
-import { SUCCESS_STATUS_CODE, BAD_REQUEST_STATUS_CODE, NOT_FOUND_STATUS_CODE } from "../contracts/response-status";
-import { State } from "../entities/state";
-import { City } from "../entities/city";
-import { Group } from "../entities/group";
-import { TouristUserGroup } from "../entities/tourist-user-group";
-import { User } from "../entities/user";
-import { DifficultLevel } from "../entities/difficult-level";
-import { PaymentStatus } from "../entities/payment-status";
-import { GroupStatus } from "../entities/group-status";
-import { RoleEnum } from '../enums/role.enum'
-import { PaymentStatusEnum } from '../enums/payment-status.enum'
-import { GroupStatusEnum } from '../enums/group-status.enum'
-import { TrekkingFindWhereOption } from "./interfaces/repository/trekking-find";
+import {
+  TrekkingRequest,
+  TrekkingFindRequest,
+  SubscribeTrekkingRequest,
+  DefineAbleToGuideTrekkingsRequest,
+  GetAbleToGuideTrekkingsRequest
+} from './interfaces/request/trekking-request';
+import { TrekkingDescription } from '../entities/trekking-description';
+import { TrekkingPrice } from '../entities/trekking-price';
+import {
+  SUCCESS_STATUS_CODE,
+  BAD_REQUEST_STATUS_CODE,
+  NOT_FOUND_STATUS_CODE
+} from '../contracts/response-status';
+import { State } from '../entities/state';
+import { City } from '../entities/city';
+import { Group } from '../entities/group';
+import { TouristUserGroup } from '../entities/tourist-user-group';
+import { User } from '../entities/user';
+import { DifficultLevel } from '../entities/difficult-level';
+import { PaymentStatus } from '../entities/payment-status';
+import { GroupStatus } from '../entities/group-status';
+import { RoleEnum } from '../enums/role.enum';
+import { PaymentStatusEnum } from '../enums/payment-status.enum';
+import { GroupStatusEnum } from '../enums/group-status.enum';
+import { TrekkingFindWhereOption } from './interfaces/repository/trekking-find';
 
 export class TrekkingController {
   private _repository: Repository<Trekking>;
@@ -34,13 +44,14 @@ export class TrekkingController {
       prices: true,
       rates: true
     }
-  }
+  };
 
   constructor() {
     this._repository = AppDataSource.getRepository(Trekking);
     this._userRepository = AppDataSource.getRepository(User);
     this._groupRepository = AppDataSource.getRepository(Group);
-    this._touristUserGroupRepository = AppDataSource.getRepository(TouristUserGroup);
+    this._touristUserGroupRepository =
+      AppDataSource.getRepository(TouristUserGroup);
   }
 
   async create(request: Request<{}, {}, TrekkingRequest>, response: Response) {
@@ -49,24 +60,30 @@ export class TrekkingController {
       await this._repository.save(trekking);
 
       response.status(SUCCESS_STATUS_CODE).send();
-    } catch(err) {
+    } catch (err) {
       response.status(BAD_REQUEST_STATUS_CODE).send();
     }
   }
 
-  async update(request: Request<{ id: string }, {}, TrekkingRequest>, response: Response) {
+  async update(
+    request: Request<{ id: string }, {}, TrekkingRequest>,
+    response: Response
+  ) {
     try {
       const trekking = this._trekkingToDomain(request.body);
-      trekking.id = +request.params.id
+      trekking.id = +request.params.id;
       await this._repository.save(trekking);
 
       response.status(SUCCESS_STATUS_CODE).send();
-    } catch(err) {
+    } catch (err) {
       response.status(BAD_REQUEST_STATUS_CODE).send();
     }
   }
 
-  async find(request: Request<{}, {}, {}, TrekkingFindRequest>, response: Response) {
+  async find(
+    request: Request<{}, {}, {}, TrekkingFindRequest>,
+    response: Response
+  ) {
     const whereFilters: TrekkingFindWhereOption = {
       name: request.query.name,
       state: {
@@ -80,10 +97,10 @@ export class TrekkingController {
       difficultLevel: {
         id: request.query.difficultLevel
       }
-    }
+    };
 
     if (request.query.ids) {
-      whereFilters.id = In(request.query.ids.split(',').map(id => +id));
+      whereFilters.id = In(request.query.ids.split(',').map((id) => +id));
     }
 
     const trekkings = await this._repository.find({
@@ -103,7 +120,7 @@ export class TrekkingController {
     });
 
     if (trekkings.length === 0) {
-      return response.status(NOT_FOUND_STATUS_CODE).send()
+      return response.status(NOT_FOUND_STATUS_CODE).send();
     }
 
     response.status(SUCCESS_STATUS_CODE).send(trekkings[0]);
@@ -111,13 +128,16 @@ export class TrekkingController {
 
   async delete(request: Request<{ id: string }>, response: Response) {
     const trekking = new Trekking();
-    trekking.id = +request.params.id
+    trekking.id = +request.params.id;
     await this._repository.softDelete(trekking);
 
     response.status(SUCCESS_STATUS_CODE).send();
   }
 
-  async defineAbleToGuideTrekkings(request: Request<{}, {}, DefineAbleToGuideTrekkingsRequest>, response: Response) {
+  async defineAbleToGuideTrekkings(
+    request: Request<{}, {}, DefineAbleToGuideTrekkingsRequest>,
+    response: Response
+  ) {
     const user = await this._userRepository.findOne({
       where: {
         id: +request.body.userId
@@ -142,7 +162,7 @@ export class TrekkingController {
       trekking.id = +trekkingId;
 
       const touristGuide = new User();
-      touristGuide.id = +request.body.userId
+      touristGuide.id = +request.body.userId;
       trekking.touristGuides = [touristGuide];
 
       this._repository.save(trekking);
@@ -151,7 +171,10 @@ export class TrekkingController {
     response.status(SUCCESS_STATUS_CODE).send();
   }
 
-  async listAbleToGuideTrekkings(request: Request<{}, {}, GetAbleToGuideTrekkingsRequest>, response: Response) {
+  async listAbleToGuideTrekkings(
+    request: Request<{}, {}, GetAbleToGuideTrekkingsRequest>,
+    response: Response
+  ) {
     const trekkings = await this._repository.find({
       where: {
         touristGuides: {
@@ -164,12 +187,15 @@ export class TrekkingController {
     response.status(SUCCESS_STATUS_CODE).send(trekkings);
   }
 
-  async subscribe(request: Request<{ id: string }, {}, SubscribeTrekkingRequest>, response: Response) {
+  async subscribe(
+    request: Request<{ id: string }, {}, SubscribeTrekkingRequest>,
+    response: Response
+  ) {
     const trekking = await this._repository.findOneBy({
       id: +request.params.id
     });
 
-    if (!trekking){
+    if (!trekking) {
       console.error('Trekking not found');
       return response.status(NOT_FOUND_STATUS_CODE).send();
     }
@@ -199,7 +225,14 @@ export class TrekkingController {
       where: {
         date: Between(
           new Date(date.getFullYear(), date.getMonth(), date.getDate()),
-          new Date(date.getFullYear(), date.getMonth(), date.getDate(), 23, 59, 59),
+          new Date(
+            date.getFullYear(),
+            date.getMonth(),
+            date.getDate(),
+            23,
+            59,
+            59
+          )
         ),
         trekking: {
           id: +request.params.id
@@ -210,7 +243,9 @@ export class TrekkingController {
       }
     });
 
-    const availableGroups = groups.filter(async (group) => !(await this._groupIsFull(group, trekking)));
+    const availableGroups = groups.filter(
+      async (group) => !(await this._groupIsFull(group, trekking))
+    );
 
     let group: Group;
 
@@ -231,16 +266,17 @@ export class TrekkingController {
     group.trekking = trekking;
 
     if (user) {
-      const existingTouristUserGroup = await this._touristUserGroupRepository.findOne({
-        where: {
-          user: {
-            id: user.id
-          },
-          group: {
-            id: group.id
+      const existingTouristUserGroup =
+        await this._touristUserGroupRepository.findOne({
+          where: {
+            user: {
+              id: user.id
+            },
+            group: {
+              id: group.id
+            }
           }
-        }
-      });
+        });
 
       if (!existingTouristUserGroup) {
         const touristUserGroup = new TouristUserGroup();
@@ -259,7 +295,10 @@ export class TrekkingController {
     response.status(NOT_FOUND_STATUS_CODE).send();
   }
 
-  private async _groupIsFull(group: Group, trekking: Trekking): Promise<boolean> {
+  private async _groupIsFull(
+    group: Group,
+    trekking: Trekking
+  ): Promise<boolean> {
     const touristUserGroupCount = await this._touristUserGroupRepository.count({
       where: {
         group: {
@@ -271,9 +310,12 @@ export class TrekkingController {
     return touristUserGroupCount === trekking.maxPeople;
   }
 
-  private _groupToDomain(subscribeTrekkingRequest: SubscribeTrekkingRequest, trekking: Trekking): Group {
+  private _groupToDomain(
+    subscribeTrekkingRequest: SubscribeTrekkingRequest,
+    trekking: Trekking
+  ): Group {
     const entity = new Group();
-    const groupStatus = new GroupStatus()
+    const groupStatus = new GroupStatus();
     groupStatus.id = GroupStatusEnum.WaitingTourist;
 
     entity.name = `${trekking.name}-${this._generateRandomString(10)}`;
@@ -285,7 +327,8 @@ export class TrekkingController {
 
   private _generateRandomString(length: number) {
     let result = '';
-    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    const characters =
+      'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     const charactersLength = characters.length;
     let counter = 0;
     while (counter < length) {
@@ -333,14 +376,18 @@ export class TrekkingController {
     return city;
   }
 
-  private _difficultLevelToDomain(trekkingRequest: TrekkingRequest): DifficultLevel {
+  private _difficultLevelToDomain(
+    trekkingRequest: TrekkingRequest
+  ): DifficultLevel {
     const difficultLevel = new DifficultLevel();
     difficultLevel.id = trekkingRequest.difficultLevel;
 
     return difficultLevel;
   }
 
-  private _descriptionsToDomain(trekkingRequest: TrekkingRequest): TrekkingDescription[] {
+  private _descriptionsToDomain(
+    trekkingRequest: TrekkingRequest
+  ): TrekkingDescription[] {
     return trekkingRequest.descriptions.map((descriptionRequest) => {
       const description = new TrekkingDescription();
       description.description = descriptionRequest;
@@ -358,5 +405,4 @@ export class TrekkingController {
       return price;
     });
   }
-
 }

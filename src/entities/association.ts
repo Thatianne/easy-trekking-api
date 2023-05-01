@@ -1,5 +1,11 @@
-import { Entity, PrimaryGeneratedColumn, Column, JoinTable, ManyToMany } from 'typeorm';
-import { User } from './user'
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  JoinTable,
+  ManyToMany
+} from 'typeorm';
+import { User } from './user';
 
 @Entity()
 export class Association {

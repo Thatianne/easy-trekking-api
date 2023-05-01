@@ -1,3 +1,3 @@
 export interface AssociationRequest {
-    name: string;
+  name: string;
 }

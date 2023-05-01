@@ -4,19 +4,19 @@ import * as dotenv from 'dotenv';
 dotenv.config();
 
 const AppDataSource = new DataSource({
-    type: "mysql",
-    host: process.env.DB_HOST,
-    port: 3306,
-    username: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME,
-    timezone: 'Z',
-    synchronize: false,
-    logging: true,
-    entities: [join(__dirname, './../../entities/{*.ts,*.js}')],
-    subscribers: [],
-    migrations: [join(__dirname, './../migrations/{*.ts,*.js}')],
-    migrationsTableName: 'migration'
+  type: 'mysql',
+  host: process.env.DB_HOST,
+  port: 3306,
+  username: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME,
+  timezone: 'Z',
+  synchronize: false,
+  logging: true,
+  entities: [join(__dirname, './../../entities/{*.ts,*.js}')],
+  subscribers: [],
+  migrations: [join(__dirname, './../migrations/{*.ts,*.js}')],
+  migrationsTableName: 'migration'
 });
 
-export { AppDataSource }
+export { AppDataSource };

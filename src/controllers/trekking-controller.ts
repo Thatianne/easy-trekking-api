@@ -103,10 +103,19 @@ export class TrekkingController {
       whereFilters.id = In(request.query.ids.split(',').map((id) => +id));
     }
 
-    const trekkings = await this._repository.find({
+    let trekkings = await this._repository.find({
       where: whereFilters,
-      relations: this._findOptions.relations
+      relations: !request.query.isAvailable
+        ? this._findOptions.relations
+        : {
+          ...this._findOptions.relations,
+          touristGuides: true
+        }
     });
+
+    if (request.query.isAvailable) {
+      trekkings = trekkings.filter(trekking => trekking.touristGuides.length >= 2);
+    }
 
     response.status(SUCCESS_STATUS_CODE).send(trekkings);
   }

@@ -9,12 +9,15 @@ import {
   BAD_REQUEST_STATUS_CODE,
   NOT_FOUND_STATUS_CODE
 } from '../contracts/response-status';
+import { Encrypt } from '../services/encrypt.service';
 
 export class UserTouristGuideController {
   private _repository: Repository<User>;
+  private _encryptService: Encrypt
 
   constructor() {
     this._repository = AppDataSource.getRepository(User);
+    this._encryptService = new Encrypt();
   }
 
   async create(
@@ -22,7 +25,8 @@ export class UserTouristGuideController {
     response: Response
   ) {
     try {
-      const userTouristGuide = this._userTouristGuideToDomain(request.body);
+      const userTouristGuide = await this._userTouristGuideToDomain(request.body);
+      console.log(userTouristGuide)
       await this._repository.save(userTouristGuide);
 
       response.status(SUCCESS_STATUS_CODE).send();
@@ -31,15 +35,15 @@ export class UserTouristGuideController {
     }
   }
 
-  private _userTouristGuideToDomain(
+  private async _userTouristGuideToDomain(
     userTouristGuideRequest: UserTouristGuideRequest
-  ): User {
+  ): Promise<User> {
     const user = new User();
 
     user.name = userTouristGuideRequest.name;
     user.email = userTouristGuideRequest.email;
     user.phone = userTouristGuideRequest.phone;
-    user.password = userTouristGuideRequest.password; // TODO encrypt password
+    user.password = await this._encryptService.encrypt(userTouristGuideRequest.password);
     user.role = this._touristGuideRoleToDomain();
 
     return user;

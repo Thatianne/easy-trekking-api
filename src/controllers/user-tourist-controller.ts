@@ -6,15 +6,17 @@ import { Role } from '../entities/role';
 import { UserTouristRequest } from './interfaces/request/user-tourist-request';
 import {
   SUCCESS_STATUS_CODE,
-  BAD_REQUEST_STATUS_CODE,
-  NOT_FOUND_STATUS_CODE
+  BAD_REQUEST_STATUS_CODE
 } from '../contracts/response-status';
+import { Encrypt } from '../services/encrypt.service';
 
 export class UserTouristController {
   private _repository: Repository<User>;
+  private _encryptService: Encrypt
 
   constructor() {
     this._repository = AppDataSource.getRepository(User);
+    this._encryptService = new Encrypt();
   }
 
   async create(
@@ -22,7 +24,7 @@ export class UserTouristController {
     response: Response
   ) {
     try {
-      const userAdmin = this._userTouristToDomain(request.body);
+      const userAdmin = await this._userTouristToDomain(request.body);
       await this._repository.save(userAdmin);
 
       response.status(SUCCESS_STATUS_CODE).send();
@@ -31,13 +33,13 @@ export class UserTouristController {
     }
   }
 
-  private _userTouristToDomain(userTouristRequest: UserTouristRequest): User {
+  private async _userTouristToDomain(userTouristRequest: UserTouristRequest): Promise<User> {
     const user = new User();
 
     user.name = userTouristRequest.name;
     user.email = userTouristRequest.email;
     user.phone = userTouristRequest.phone;
-    user.password = userTouristRequest.password; // TODO encrypt password
+    user.password = await this._encryptService.encrypt(userTouristRequest.password);
     user.role = this._touristRoleToDomain();
 
     return user;

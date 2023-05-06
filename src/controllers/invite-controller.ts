@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { Request, Response } from 'express';
 import { Repository } from 'typeorm';
 import { AppDataSource } from '../database/configuration/db-data-source';
 import { Group } from '../entities/group';
@@ -6,8 +6,12 @@ import { User } from '../entities/user';
 import { GroupStatus } from '../entities/group-status';
 import { GroupStatusEnum } from '../enums/group-status.enum';
 import { RoleEnum } from '../enums/role.enum';
-import { SUCCESS_STATUS_CODE, BAD_REQUEST_STATUS_CODE, NOT_FOUND_STATUS_CODE } from "../contracts/response-status";
-import { AcceptInviteRequest } from './interfaces/request/invite-request'
+import {
+  SUCCESS_STATUS_CODE,
+  BAD_REQUEST_STATUS_CODE,
+  NOT_FOUND_STATUS_CODE
+} from '../contracts/response-status';
+import { AcceptInviteRequest } from './interfaces/request/invite-request';
 
 export class InviteController {
   private _groupRepository: Repository<Group>;
@@ -18,8 +22,11 @@ export class InviteController {
     this._userRepository = AppDataSource.getRepository(User);
   }
 
-  async accept(request: Request<{}, {}, {}, AcceptInviteRequest>, response: Response) {
-    console.log(request.query)
+  async accept(
+    request: Request<{}, {}, {}, AcceptInviteRequest>,
+    response: Response
+  ) {
+    console.log(request.query);
     const group = await this._groupRepository.findOne({
       where: {
         id: +request.query.groupId
@@ -44,7 +51,7 @@ export class InviteController {
           id: RoleEnum.TouristGuide
         }
       }
-    })
+    });
 
     if (!user) {
       return response.status(NOT_FOUND_STATUS_CODE).send({
@@ -76,5 +83,4 @@ export class InviteController {
 
     response.status(SUCCESS_STATUS_CODE).send();
   }
-
 }

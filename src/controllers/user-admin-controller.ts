@@ -8,15 +8,15 @@ import {
   SUCCESS_STATUS_CODE,
   BAD_REQUEST_STATUS_CODE
 } from '../contracts/response-status';
-import { Encrypt } from '../services/encrypt.service';
+import { EncryptService } from '../services/encrypt-service';
 
 export class UserAdminController {
   private _repository: Repository<User>;
-  private _encryptService: Encrypt
+  private _encryptService: EncryptService;
 
   constructor() {
     this._repository = AppDataSource.getRepository(User);
-    this._encryptService = new Encrypt();
+    this._encryptService = new EncryptService();
   }
 
   async create(request: Request<{}, {}, UserAdminRequest>, response: Response) {
@@ -30,12 +30,16 @@ export class UserAdminController {
     }
   }
 
-  private async _userAdminToDomain(userAdminRequest: UserAdminRequest): Promise<User> {
+  private async _userAdminToDomain(
+    userAdminRequest: UserAdminRequest
+  ): Promise<User> {
     const user = new User();
 
     user.name = userAdminRequest.email;
     user.email = userAdminRequest.email;
-    user.password = await this._encryptService.encrypt(userAdminRequest.password);
+    user.password = await this._encryptService.encrypt(
+      userAdminRequest.password
+    );
     user.role = this._adminRoleToDomain();
 
     return user;

@@ -24,7 +24,7 @@ export interface TrekkingFindRequest {
   durationInHours: number;
   distanceInMeters: number;
   difficultLevel: number;
-  isAvailable?: boolean
+  isAvailable?: boolean;
 }
 
 export interface TrekkingDeleteRequest {

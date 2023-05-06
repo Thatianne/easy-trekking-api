@@ -108,13 +108,15 @@ export class TrekkingController {
       relations: !request.query.isAvailable
         ? this._findOptions.relations
         : {
-          ...this._findOptions.relations,
-          touristGuides: true
-        }
+            ...this._findOptions.relations,
+            touristGuides: true
+          }
     });
 
     if (request.query.isAvailable) {
-      trekkings = trekkings.filter(trekking => trekking.touristGuides.length >= 2);
+      trekkings = trekkings.filter(
+        (trekking) => trekking.touristGuides.length >= 2
+      );
     }
 
     response.status(SUCCESS_STATUS_CODE).send(trekkings);

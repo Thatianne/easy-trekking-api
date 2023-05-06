@@ -8,15 +8,15 @@ import {
   SUCCESS_STATUS_CODE,
   BAD_REQUEST_STATUS_CODE
 } from '../contracts/response-status';
-import { Encrypt } from '../services/encrypt.service';
+import { EncryptService } from '../services/encrypt-service';
 
 export class UserTouristController {
   private _repository: Repository<User>;
-  private _encryptService: Encrypt
+  private _encryptService: EncryptService;
 
   constructor() {
     this._repository = AppDataSource.getRepository(User);
-    this._encryptService = new Encrypt();
+    this._encryptService = new EncryptService();
   }
 
   async create(
@@ -33,13 +33,17 @@ export class UserTouristController {
     }
   }
 
-  private async _userTouristToDomain(userTouristRequest: UserTouristRequest): Promise<User> {
+  private async _userTouristToDomain(
+    userTouristRequest: UserTouristRequest
+  ): Promise<User> {
     const user = new User();
 
     user.name = userTouristRequest.name;
     user.email = userTouristRequest.email;
     user.phone = userTouristRequest.phone;
-    user.password = await this._encryptService.encrypt(userTouristRequest.password);
+    user.password = await this._encryptService.encrypt(
+      userTouristRequest.password
+    );
     user.role = this._touristRoleToDomain();
 
     return user;

@@ -3,6 +3,7 @@ import { TrekkingController } from '../controllers/trekking-controller';
 import { UserAdminController } from '../controllers/user-admin-controller';
 import { UserTouristGuideController } from '../controllers/user-tourist-guide-controller';
 import { UserTouristController } from '../controllers/user-tourist-controller';
+import { UserController } from '../controllers/user-controller';
 import { AssociationController } from '../controllers/association-controller';
 import { InviteController } from '../controllers/invite-controller';
 
@@ -13,6 +14,7 @@ const userTouristGuideControlller = new UserTouristGuideController();
 const userTouristController = new UserTouristController();
 const associationController = new AssociationController();
 const inviteController = new InviteController();
+const userController = new UserController();
 
 Routes.get(
   '/trekkings/able-to-guide',
@@ -65,6 +67,8 @@ Routes.post(
   '/tourist',
   userTouristController.create.bind(userTouristController)
 );
+
+Routes.post('/login', userController.login.bind(userController));
 
 Routes.get('/invite/accept', inviteController.accept.bind(inviteController));
 

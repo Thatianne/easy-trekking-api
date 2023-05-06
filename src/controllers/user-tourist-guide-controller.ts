@@ -9,15 +9,15 @@ import {
   BAD_REQUEST_STATUS_CODE,
   NOT_FOUND_STATUS_CODE
 } from '../contracts/response-status';
-import { Encrypt } from '../services/encrypt.service';
+import { EncryptService } from '../services/encrypt-service';
 
 export class UserTouristGuideController {
   private _repository: Repository<User>;
-  private _encryptService: Encrypt
+  private _encryptService: EncryptService;
 
   constructor() {
     this._repository = AppDataSource.getRepository(User);
-    this._encryptService = new Encrypt();
+    this._encryptService = new EncryptService();
   }
 
   async create(
@@ -25,12 +25,14 @@ export class UserTouristGuideController {
     response: Response
   ) {
     try {
-      const userTouristGuide = await this._userTouristGuideToDomain(request.body);
-      console.log(userTouristGuide)
+      const userTouristGuide = await this._userTouristGuideToDomain(
+        request.body
+      );
       await this._repository.save(userTouristGuide);
 
       response.status(SUCCESS_STATUS_CODE).send();
     } catch (err) {
+      console.log(err);
       response.status(BAD_REQUEST_STATUS_CODE).send();
     }
   }
@@ -43,7 +45,9 @@ export class UserTouristGuideController {
     user.name = userTouristGuideRequest.name;
     user.email = userTouristGuideRequest.email;
     user.phone = userTouristGuideRequest.phone;
-    user.password = await this._encryptService.encrypt(userTouristGuideRequest.password);
+    user.password = await this._encryptService.encrypt(
+      userTouristGuideRequest.password
+    );
     user.role = this._touristGuideRoleToDomain();
 
     return user;

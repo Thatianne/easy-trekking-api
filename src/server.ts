@@ -2,13 +2,14 @@ import * as dotenv from 'dotenv';
 dotenv.config();
 
 import express from 'express';
+import cors from 'cors';
 import serverless from 'serverless-http';
 import 'reflect-metadata';
 import { Routes } from './routes';
 import { AppDataSource } from './database/configuration/db-data-source';
 
 const app = express();
-
+app.use(cors())
 app.use(express.json());
 
 // Database connection

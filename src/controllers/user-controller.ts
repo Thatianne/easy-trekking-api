@@ -30,6 +30,9 @@ export class UserController {
         where: {
           email: request.body.email,
           password: encryptedPassword
+        },
+        relations: {
+          role: true
         }
       });
 

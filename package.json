@@ -11,6 +11,7 @@
     "deploy": "serverless deploy",
     "schema:sync": "./node_modules/.bin/ts-node ./node_modules/.bin/typeorm schema:sync -d src/database/configuration/db-data-source.ts",
     "migration:generate": "./node_modules/.bin/ts-node ./node_modules/.bin/typeorm migration:generate -d src/database/configuration/db-data-source.ts",
+    "migration:create": "./node_modules/.bin/ts-node ./node_modules/.bin/typeorm migration:create",
     "migration:run": "./node_modules/.bin/ts-node ./node_modules/.bin/typeorm migration:run -d src/database/configuration/db-data-source.ts",
     "prettier-format": "prettier --config .prettierrc 'src/**/*.ts' --write",
     "test": "echo \"Error: no test specified\" && exit 1"

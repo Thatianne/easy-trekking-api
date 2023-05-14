@@ -31,7 +31,7 @@ export class AssociationController {
   }
 
   async find(request: Request, response: Response) {
-    const associations = await this._repository.find();
+    const associations = await this._repository.find({ order: { value: 'asc'}});
 
     response.status(SUCCESS_STATUS_CODE).send(associations);
   }

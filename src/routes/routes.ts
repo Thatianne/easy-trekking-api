@@ -6,6 +6,8 @@ import { UserTouristController } from '../controllers/user-tourist-controller';
 import { UserController } from '../controllers/user-controller';
 import { AssociationController } from '../controllers/association-controller';
 import { InviteController } from '../controllers/invite-controller';
+import { StateController } from '../controllers/state-controller';
+import { CityController } from '../controllers/city-controller';
 
 const Routes = Router();
 const trekkingController = new TrekkingController();
@@ -15,6 +17,8 @@ const userTouristController = new UserTouristController();
 const associationController = new AssociationController();
 const inviteController = new InviteController();
 const userController = new UserController();
+const stateController = new StateController();
+const cityController = new CityController();
 
 Routes.get(
   '/trekkings/able-to-guide',
@@ -44,32 +48,41 @@ Routes.delete(
 );
 
 Routes.post(
-  '/association',
+  '/associations',
   associationController.create.bind(associationController)
 );
 Routes.get(
-  '/association',
+  '/associations',
   associationController.find.bind(associationController)
 );
 Routes.delete(
-  '/association/:id',
+  '/associations/:id',
   associationController.delete.bind(associationController)
 );
 
 Routes.post(
-  '/tourist-guide',
+  '/tourist-guides',
   userTouristGuideControlller.create.bind(userTouristGuideControlller)
 );
 
-Routes.post('/admin', userAdminControlller.create.bind(userAdminControlller));
+Routes.post('/admins', userAdminControlller.create.bind(userAdminControlller));
 
 Routes.post(
-  '/tourist',
+  '/tourists',
   userTouristController.create.bind(userTouristController)
 );
 
 Routes.post('/login', userController.login.bind(userController));
 
 Routes.get('/invite/accept', inviteController.accept.bind(inviteController));
+
+Routes.get(
+  '/states',
+  stateController.find.bind(stateController)
+);
+Routes.get(
+  '/cities',
+  cityController.find.bind(cityController)
+);
 
 export { Routes };

@@ -4,8 +4,7 @@ import { AppDataSource } from '../database/configuration/db-data-source';
 import { Association } from '../entities/association';
 import {
   SUCCESS_STATUS_CODE,
-  BAD_REQUEST_STATUS_CODE,
-  NOT_FOUND_STATUS_CODE
+  BAD_REQUEST_STATUS_CODE
 } from '../contracts/response-status';
 import { AssociationRequest } from './interfaces/request/association-request';
 

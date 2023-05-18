@@ -216,16 +216,27 @@ export class TrekkingController {
       return response.status(BAD_REQUEST_STATUS_CODE).send();
     }
 
-    request.body.trekkings.forEach((trekkingId) => {
-      const trekking = new Trekking();
-      trekking.id = +trekkingId;
+    for (let index = 0; index < request.body.trekkings.length; index++) {
+      const trekkingId = request.body.trekkings[index];
+      const trekking = await this._repository.findOne({
+        where: {
+          id: +trekkingId
+        },
+        relations: {
+          touristGuides: true
+        }
+      });
+
+      if (!trekking) {
+        continue;
+      }
 
       const touristGuide = new User();
       touristGuide.id = +request.body.userId;
-      trekking.touristGuides = [touristGuide];
+      trekking.touristGuides.push(touristGuide);
 
-      this._repository.save(trekking);
-    });
+      await this._repository.save(trekking);
+    }
 
     response.status(SUCCESS_STATUS_CODE).send();
   }
@@ -410,7 +421,6 @@ export class TrekkingController {
     entity.difficultLevel = this._difficultLevelToDomain(trekkingRequest);
     entity.descriptions = this._descriptionsToDomain(trekkingRequest);
 
-    // entity.images = trekkingRequest.images;
     entity.prices = this._pricesToDomain(trekkingRequest);
 
     entity.minPeople = trekkingRequest.minPeople;

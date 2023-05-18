@@ -16,19 +16,24 @@ app.get('/', function (req, res) {
   res.send('Hello World!')
 })
 
-app.use((req, res, next) => {
-  if (!AppDataSource.isInitialized) {
-    AppDataSource.initialize()
-      .then(() => {
-          next();
-      })
-      .catch(err => {
-        console.log(err)
-      });
-  }
-});
+// app.use((req, res, next) => {
+//   if (!AppDataSource.isInitialized) {
+//     AppDataSource.initialize()
+//       .then(() => {
+//           next();
+//       })
+//       .catch(err => {
+//         console.log(err)
+//       });
+//   }
+// });
 
-app.use('/', Routes);
+// app.use('/', Routes);
+
+AppDataSource.initialize().then(() => {
+  // Routes
+  app.use('/', Routes);
+});
 
 app.listen(3333, () => 'server running on port 3333'); // for local
 module.exports.handler = serverless(app); // for lambda

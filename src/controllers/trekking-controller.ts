@@ -1,3 +1,4 @@
+import fs from 'fs';
 import { Request, Response } from 'express';
 import { FindManyOptions, Repository, In, Between } from 'typeorm';
 import { AppDataSource } from '../database/configuration/db-data-source';
@@ -24,6 +25,7 @@ import { User } from '../entities/user';
 import { DifficultLevel } from '../entities/difficult-level';
 import { PaymentStatus } from '../entities/payment-status';
 import { GroupStatus } from '../entities/group-status';
+import { TrekkingImage } from '../entities/trekking-image';
 import { RoleEnum } from '../enums/role.enum';
 import { PaymentStatusEnum } from '../enums/payment-status.enum';
 import { GroupStatusEnum } from '../enums/group-status.enum';
@@ -34,6 +36,7 @@ export class TrekkingController {
   private _userRepository: Repository<User>;
   private _groupRepository: Repository<Group>;
   private _touristUserGroupRepository: Repository<TouristUserGroup>;
+  private _trekkingImageRepository: Repository<TrekkingImage>;
   private _findOptions: FindManyOptions = {
     relations: {
       state: true,
@@ -52,6 +55,7 @@ export class TrekkingController {
     this._groupRepository = AppDataSource.getRepository(Group);
     this._touristUserGroupRepository =
       AppDataSource.getRepository(TouristUserGroup);
+    this._trekkingImageRepository = AppDataSource.getRepository(TrekkingImage);
   }
 
   async create(request: Request<{}, {}, TrekkingRequest>, response: Response) {
@@ -63,6 +67,50 @@ export class TrekkingController {
     } catch (err) {
       response.status(BAD_REQUEST_STATUS_CODE).send();
     }
+  }
+
+  async addImages(
+    request: Request<{ id: string }, {}, { files: any[] }>,
+    response: Response
+  ) {
+    const trekkingImages: TrekkingImage[] = [];
+    const trekking = new Trekking();
+    trekking.id = +request.params.id;
+
+    if (request.files) {
+      // @ts-ignore
+      request.files.forEach((file: Express.Multer.File) => {
+        const trekkingImage = new TrekkingImage();
+        trekkingImage.trekking = trekking;
+        var data = fs.readFileSync(file.path);
+        trekkingImage.image = Buffer.from(data);
+
+        trekkingImages.push(trekkingImage);
+      });
+
+      await this._trekkingImageRepository.save(trekkingImages);
+
+      return response.status(SUCCESS_STATUS_CODE).send();
+    }
+
+    response.status(BAD_REQUEST_STATUS_CODE).send('Should add images as formdata');
+  }
+
+  async getImages(request: Request<{ id: string }>, response: Response) {
+    const images = await this._trekkingImageRepository.find({
+      where: {
+        trekking: {
+          id: +request.params.id
+        }
+      }
+    });
+
+    return response.status(SUCCESS_STATUS_CODE).send(
+      images.map(image => ({
+        id: image.id,
+        image: Buffer.from(image.image).toString('base64')
+      }))
+    );
   }
 
   async update(

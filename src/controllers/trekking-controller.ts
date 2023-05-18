@@ -105,12 +105,7 @@ export class TrekkingController {
       }
     });
 
-    return response.status(SUCCESS_STATUS_CODE).send(
-      images.map(image => ({
-        id: image.id,
-        image: Buffer.from(image.image).toString('base64')
-      }))
-    );
+    return response.status(SUCCESS_STATUS_CODE).send(images);
   }
 
   async update(

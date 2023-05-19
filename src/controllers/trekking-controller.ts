@@ -1,6 +1,6 @@
 import fs from 'fs';
 import { Request, Response } from 'express';
-import { FindManyOptions, Repository, In, Between } from 'typeorm';
+import { FindManyOptions, Repository, In, Between, Like } from 'typeorm';
 import { AppDataSource } from '../database/configuration/db-data-source';
 import { Trekking } from '../entities/trekking';
 import {
@@ -128,7 +128,7 @@ export class TrekkingController {
     response: Response
   ) {
     const whereFilters: TrekkingFindWhereOption = {
-      name: request.query.name,
+      name: Like(`%${request.query.name}%`),
       state: {
         id: request.query.state
       },

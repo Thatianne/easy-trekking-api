@@ -2,7 +2,7 @@ import { FindOperator } from 'typeorm';
 
 export interface TrekkingFindWhereOption {
   id?: FindOperator<number>;
-  name?: string;
+  name?: FindOperator<string>;
   state?: {
     id: number;
   };

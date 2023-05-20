@@ -69,45 +69,6 @@ export class TrekkingController {
     }
   }
 
-  async addImages(
-    request: Request<{ id: string }, {}, { files: any[] }>,
-    response: Response
-  ) {
-    const trekkingImages: TrekkingImage[] = [];
-    const trekking = new Trekking();
-    trekking.id = +request.params.id;
-
-    if (request.files) {
-      // @ts-ignore
-      request.files.forEach((file: Express.Multer.File) => {
-        const trekkingImage = new TrekkingImage();
-        trekkingImage.trekking = trekking;
-        var data = fs.readFileSync(file.path);
-        trekkingImage.image = Buffer.from(data);
-
-        trekkingImages.push(trekkingImage);
-      });
-
-      await this._trekkingImageRepository.save(trekkingImages);
-
-      return response.status(SUCCESS_STATUS_CODE).send();
-    }
-
-    response.status(BAD_REQUEST_STATUS_CODE).send('Should add images as formdata');
-  }
-
-  async getImages(request: Request<{ id: string }>, response: Response) {
-    const images = await this._trekkingImageRepository.find({
-      where: {
-        trekking: {
-          id: +request.params.id
-        }
-      }
-    });
-
-    return response.status(SUCCESS_STATUS_CODE).send(images);
-  }
-
   async update(
     request: Request<{ id: string }, {}, TrekkingRequest>,
     response: Response
@@ -128,7 +89,6 @@ export class TrekkingController {
     response: Response
   ) {
     const whereFilters: TrekkingFindWhereOption = {
-      name: Like(`%${request.query.name}%`),
       state: {
         id: request.query.state
       },
@@ -141,6 +101,10 @@ export class TrekkingController {
         id: request.query.difficultLevel
       }
     };
+
+    if (request.query.name) {
+      whereFilters.name = Like(`%${request.query.name}%`);
+    }
 
     if (request.query.ids) {
       whereFilters.id = In(request.query.ids.split(',').map((id) => +id));

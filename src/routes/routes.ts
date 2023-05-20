@@ -1,5 +1,4 @@
 import { Router } from 'express';
-import multer from 'multer';
 import { TrekkingController } from '../controllers/trekking-controller';
 import { UserAdminController } from '../controllers/user-admin-controller';
 import { UserTouristGuideController } from '../controllers/user-tourist-guide-controller';
@@ -9,7 +8,6 @@ import { AssociationController } from '../controllers/association-controller';
 import { InviteController } from '../controllers/invite-controller';
 import { StateController } from '../controllers/state-controller';
 import { CityController } from '../controllers/city-controller';
-import path from 'path';
 
 const Routes = Router();
 const trekkingController = new TrekkingController();
@@ -22,7 +20,6 @@ const userController = new UserController();
 const stateController = new StateController();
 const cityController = new CityController();
 
-const upload = multer({ dest: path.join(__dirname, 'uploads') })
 
 Routes.get(
   '/trekkings/able-to-guide',
@@ -42,8 +39,6 @@ Routes.post(
   trekkingController.subscribe.bind(trekkingController)
 );
 Routes.post('/trekkings', trekkingController.create.bind(trekkingController));
-Routes.post('/trekkings/:id/images', upload.array('images'), trekkingController.addImages.bind(trekkingController));
-Routes.get('/trekkings/:id/images', trekkingController.getImages.bind(trekkingController))
 Routes.put(
   '/trekkings/:id',
   trekkingController.update.bind(trekkingController)

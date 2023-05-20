@@ -17,16 +17,8 @@ export class TrekkingImage {
   @ManyToOne(() => Trekking, (trekking) => trekking.id)
   trekking: Trekking;
 
-  @Column({
-    type: 'mediumblob',
-    transformer: {
-      from: image => { // reading
-        return image ? Buffer.from(image).toString('base64') : null;
-      },
-      to: image => image // saving
-    }
-  })
-  image: Buffer;
+  @Column()
+  image: string;
 
   @CreateDateColumn()
   createdAt: Date;

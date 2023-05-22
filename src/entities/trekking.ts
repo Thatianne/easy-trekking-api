@@ -78,7 +78,7 @@ export class Trekking {
   @OneToMany(() => Group, (group) => group.trekking)
   groups: Group[];
 
-  @ManyToMany(() => User)
+  @ManyToMany(() => User, (user) => user.ableToGuideTrekkings)
   @JoinTable()
   touristGuides: User[];
 

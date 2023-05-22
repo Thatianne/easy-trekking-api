@@ -22,7 +22,7 @@ const cityController = new CityController();
 
 
 Routes.get(
-  '/trekkings/able-to-guide',
+  '/trekkings/able-to-guide/:userId',
   trekkingController.listAbleToGuideTrekkings.bind(trekkingController)
 );
 Routes.get('/trekkings', trekkingController.find.bind(trekkingController));
@@ -31,7 +31,7 @@ Routes.get(
   trekkingController.findById.bind(trekkingController)
 );
 Routes.post(
-  '/trekkings/able-to-guide',
+  '/trekkings/able-to-guide/:userId',
   trekkingController.defineAbleToGuideTrekkings.bind(trekkingController)
 );
 Routes.post(

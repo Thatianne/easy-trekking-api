@@ -42,8 +42,8 @@ export class User {
   @JoinTable()
   associations: Association[];
 
-  @ManyToMany(() => Trekking)
-  trekkings: Trekking[];
+  @ManyToMany(() => Trekking, (trekking) => trekking.touristGuides)
+  ableToGuideTrekkings: Trekking[];
 
   @OneToMany(() => UserDocument, (userDocument) => userDocument.user, {
     cascade: true

@@ -44,9 +44,4 @@ export interface SubscribeTrekkingRequest {
 
 export interface DefineAbleToGuideTrekkingsRequest {
   trekkings: number[];
-  userId: number; // TODO Use from authenticated user
-}
-
-export interface GetAbleToGuideTrekkingsRequest {
-  userId: number; // TODO Use from authenticated user
 }

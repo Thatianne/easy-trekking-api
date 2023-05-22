@@ -7,8 +7,7 @@ import {
   TrekkingRequest,
   TrekkingFindRequest,
   SubscribeTrekkingRequest,
-  DefineAbleToGuideTrekkingsRequest,
-  GetAbleToGuideTrekkingsRequest
+  DefineAbleToGuideTrekkingsRequest
 } from './interfaces/request/trekking-request';
 import { TrekkingDescription } from '../entities/trekking-description';
 import { TrekkingPrice } from '../entities/trekking-price';
@@ -36,7 +35,6 @@ export class TrekkingController {
   private _userRepository: Repository<User>;
   private _groupRepository: Repository<Group>;
   private _touristUserGroupRepository: Repository<TouristUserGroup>;
-  private _trekkingImageRepository: Repository<TrekkingImage>;
   private _findOptions: FindManyOptions = {
     relations: {
       state: true,
@@ -55,7 +53,6 @@ export class TrekkingController {
     this._groupRepository = AppDataSource.getRepository(Group);
     this._touristUserGroupRepository =
       AppDataSource.getRepository(TouristUserGroup);
-    this._trekkingImageRepository = AppDataSource.getRepository(TrekkingImage);
   }
 
   async create(request: Request<{}, {}, TrekkingRequest>, response: Response) {
@@ -153,15 +150,16 @@ export class TrekkingController {
   }
 
   async defineAbleToGuideTrekkings(
-    request: Request<{}, {}, DefineAbleToGuideTrekkingsRequest>,
+    request: Request<{ userId: string }, {}, DefineAbleToGuideTrekkingsRequest>,
     response: Response
   ) {
     const user = await this._userRepository.findOne({
       where: {
-        id: +request.body.userId
+        id: +request.params.userId
       },
       relations: {
-        role: true
+        role: true,
+        ableToGuideTrekkings: true
       }
     });
 
@@ -175,6 +173,10 @@ export class TrekkingController {
       return response.status(BAD_REQUEST_STATUS_CODE).send();
     }
 
+    user.ableToGuideTrekkings = [];
+    await this._userRepository.save(user);
+
+    const trekkings: Trekking[] = [];
     for (let index = 0; index < request.body.trekkings.length; index++) {
       const trekkingId = request.body.trekkings[index];
       const trekking = await this._repository.findOne({
@@ -191,23 +193,24 @@ export class TrekkingController {
       }
 
       const touristGuide = new User();
-      touristGuide.id = +request.body.userId;
+      touristGuide.id = +request.params.userId;
       trekking.touristGuides.push(touristGuide);
 
-      await this._repository.save(trekking);
+      trekkings.push(trekking);
     }
 
+    await this._repository.save(trekkings);
     response.status(SUCCESS_STATUS_CODE).send();
   }
 
   async listAbleToGuideTrekkings(
-    request: Request<{}, {}, GetAbleToGuideTrekkingsRequest>,
+    request: Request<{ userId: string }>,
     response: Response
   ) {
     const trekkings = await this._repository.find({
       where: {
         touristGuides: {
-          id: +request.body.userId
+          id: +request.params.userId
         }
       },
       relations: this._findOptions.relations
@@ -379,6 +382,7 @@ export class TrekkingController {
     entity.durationInHours = trekkingRequest.durationInHours;
     entity.difficultLevel = this._difficultLevelToDomain(trekkingRequest);
     entity.descriptions = this._descriptionsToDomain(trekkingRequest);
+    entity.images = this._trekkingImageToDomain(trekkingRequest);
 
     entity.prices = this._pricesToDomain(trekkingRequest);
 
@@ -411,6 +415,15 @@ export class TrekkingController {
     difficultLevel.id = trekkingRequest.difficultLevel;
 
     return difficultLevel;
+  }
+
+  private _trekkingImageToDomain(trekkingRequest: TrekkingRequest): TrekkingImage[] {
+    return trekkingRequest.images.map(imageUrl => {
+      const trekkingImage = new TrekkingImage();
+      trekkingImage.image = imageUrl;
+
+      return trekkingImage;
+    });
   }
 
   private _descriptionsToDomain(

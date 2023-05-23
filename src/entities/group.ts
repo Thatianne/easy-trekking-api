@@ -8,7 +8,8 @@ import {
   JoinColumn,
   CreateDateColumn,
   UpdateDateColumn,
-  DeleteDateColumn
+  DeleteDateColumn,
+  OneToMany
 } from 'typeorm';
 import { Trekking } from './trekking';
 import { GroupStatus } from './group-status';
@@ -38,7 +39,7 @@ export class Group {
   @ManyToOne(() => User, (touristGuideUser) => touristGuideUser.id)
   touristGuideUser: User;
 
-  @ManyToMany(() => TouristUserGroup)
+  @OneToMany(() => TouristUserGroup, (touristUserGroup) => touristUserGroup.group)
   tourists: TouristUserGroup[];
 
   @CreateDateColumn()

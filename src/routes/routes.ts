@@ -8,6 +8,7 @@ import { AssociationController } from '../controllers/association-controller';
 import { InviteController } from '../controllers/invite-controller';
 import { StateController } from '../controllers/state-controller';
 import { CityController } from '../controllers/city-controller';
+import { GroupController } from '../controllers/group-controller';
 
 const Routes = Router();
 const trekkingController = new TrekkingController();
@@ -19,7 +20,7 @@ const inviteController = new InviteController();
 const userController = new UserController();
 const stateController = new StateController();
 const cityController = new CityController();
-
+const groupController = new GroupController();
 
 Routes.get(
   '/trekkings/able-to-guide/:userId',
@@ -35,7 +36,7 @@ Routes.post(
   trekkingController.defineAbleToGuideTrekkings.bind(trekkingController)
 );
 Routes.post(
-  '/trekkings/:id/subscribe',
+  '/trekkings/:trekkingId/subscribe/:userId',
   trekkingController.subscribe.bind(trekkingController)
 );
 Routes.post('/trekkings', trekkingController.create.bind(trekkingController));
@@ -59,6 +60,10 @@ Routes.get(
 Routes.delete(
   '/associations/:id',
   associationController.delete.bind(associationController)
+);
+Routes.get(
+  '/groups',
+  groupController.find.bind(groupController)
 );
 
 Routes.post(

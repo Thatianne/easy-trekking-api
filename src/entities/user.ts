@@ -17,6 +17,7 @@ import { Association } from './association';
 import { UserDocument } from './user-document';
 import { Trekking } from './trekking';
 import { Group } from './group';
+import { TouristUserGroup } from './tourist-user-group';
 
 @Entity()
 export class User {
@@ -41,6 +42,12 @@ export class User {
   @ManyToMany(() => Association)
   @JoinTable()
   associations: Association[];
+
+  @OneToMany(() => Group, group => group.touristGuideUser)
+  guideGroups: Group[];
+
+  @OneToMany(() => TouristUserGroup, touristUserGroup => touristUserGroup.user)
+  touristUserGroups: TouristUserGroup[];
 
   @ManyToMany(() => Trekking, (trekking) => trekking.touristGuides)
   ableToGuideTrekkings: Trekking[];

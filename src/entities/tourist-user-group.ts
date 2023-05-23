@@ -2,6 +2,7 @@ import {
   Entity,
   PrimaryGeneratedColumn,
   ManyToOne,
+  OneToOne,
   CreateDateColumn,
   UpdateDateColumn,
   DeleteDateColumn
@@ -15,10 +16,10 @@ export class TouristUserGroup {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => Group)
+  @ManyToOne(() => Group, group => group.tourists)
   group: Group;
 
-  @ManyToOne(() => User)
+  @ManyToOne(() => User, user => user.touristUserGroups)
   user: User;
 
   @ManyToOne(() => PaymentStatus)

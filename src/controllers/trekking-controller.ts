@@ -220,11 +220,11 @@ export class TrekkingController {
   }
 
   async subscribe(
-    request: Request<{ id: string }, {}, SubscribeTrekkingRequest>,
+    request: Request<{ trekkingId: string, userId: string }, {}, SubscribeTrekkingRequest>,
     response: Response
   ) {
     const trekking = await this._repository.findOneBy({
-      id: +request.params.id
+      id: +request.params.trekkingId
     });
 
     if (!trekking) {
@@ -234,7 +234,7 @@ export class TrekkingController {
 
     const user = await this._userRepository.findOne({
       where: {
-        id: +request.body.userId
+        id: +request.params.userId
       },
       relations: {
         role: true
@@ -267,7 +267,7 @@ export class TrekkingController {
           )
         ),
         trekking: {
-          id: +request.params.id
+          id: +request.params.trekkingId
         }
       },
       relations: {

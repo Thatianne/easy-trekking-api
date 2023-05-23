@@ -38,7 +38,6 @@ interface PriceDataRequest {
 }
 
 export interface SubscribeTrekkingRequest {
-  userId: number; // TODO Use from authenticated user
   date: string;
 }
 

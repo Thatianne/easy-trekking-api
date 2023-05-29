@@ -229,7 +229,9 @@ export class TrekkingController {
 
     if (!trekking) {
       console.error('Trekking not found');
-      return response.status(NOT_FOUND_STATUS_CODE).send();
+      return response.status(NOT_FOUND_STATUS_CODE).send({
+        message: 'Trekking não encontrado'
+      });
     }
 
     const user = await this._userRepository.findOne({
@@ -243,12 +245,16 @@ export class TrekkingController {
 
     if (!user) {
       console.error('User not found');
-      return response.status(NOT_FOUND_STATUS_CODE).send();
+      return response.status(NOT_FOUND_STATUS_CODE).send({
+        message: 'Usuário não encontrado'
+      });
     }
 
     if (user.role.id !== RoleEnum.Tourist) {
       console.error('User should be a tourist');
-      return response.status(BAD_REQUEST_STATUS_CODE).send();
+      return response.status(BAD_REQUEST_STATUS_CODE).send({
+        message: 'O usuário deve ser um turista'
+      });
     }
 
     const date = new Date(request.body.date);
@@ -319,9 +325,16 @@ export class TrekkingController {
         touristUserGroup.paymentStatus = paymentStatus;
 
         await this._touristUserGroupRepository.save(touristUserGroup);
+        return response.status(SUCCESS_STATUS_CODE).send(group);
+      } else {
+        return response.status(BAD_REQUEST_STATUS_CODE).send({
+          message: 'Você já se encontrar inscrito para o trekking nesta data',
+          code: 601,
+          data: {
+            group: group
+          }
+        })
       }
-
-      response.status(SUCCESS_STATUS_CODE).send(group);
     }
 
     response.status(NOT_FOUND_STATUS_CODE).send();

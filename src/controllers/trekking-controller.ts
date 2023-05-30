@@ -395,6 +395,7 @@ export class TrekkingController {
     entity.durationInHours = trekkingRequest.durationInHours;
     entity.difficultLevel = this._difficultLevelToDomain(trekkingRequest);
     entity.descriptions = this._descriptionsToDomain(trekkingRequest);
+    entity.description = trekkingRequest.description;
     entity.images = this._trekkingImageToDomain(trekkingRequest);
 
     entity.prices = this._pricesToDomain(trekkingRequest);
@@ -431,9 +432,12 @@ export class TrekkingController {
   }
 
   private _trekkingImageToDomain(trekkingRequest: TrekkingRequest): TrekkingImage[] {
-    return trekkingRequest.images.map(imageUrl => {
+    return trekkingRequest.images.map(imageRequest => {
       const trekkingImage = new TrekkingImage();
-      trekkingImage.image = imageUrl;
+      trekkingImage.image = imageRequest.image;
+      if (imageRequest.id) {
+        trekkingImage.id = imageRequest.id;
+      }
 
       return trekkingImage;
     });
@@ -443,20 +447,26 @@ export class TrekkingController {
     trekkingRequest: TrekkingRequest
   ): TrekkingDescription[] {
     return trekkingRequest.descriptions.map((descriptionRequest) => {
-      const description = new TrekkingDescription();
-      description.description = descriptionRequest;
-      return description;
+      const trekkingDescription = new TrekkingDescription();
+      trekkingDescription.description = descriptionRequest.description;
+      if (descriptionRequest.id) {
+        trekkingDescription.id = descriptionRequest.id;
+      }
+      return trekkingDescription;
     });
   }
 
   private _pricesToDomain(trekkingRequest: TrekkingRequest): TrekkingPrice[] {
     return trekkingRequest.prices.map((priceRequest) => {
-      const price = new TrekkingPrice();
-      price.startDate = new Date(priceRequest.startDate);
-      price.endDate = new Date(priceRequest.endDate);
-      price.price = priceRequest.price;
+      const trekkingPrice = new TrekkingPrice();
+      trekkingPrice.startDate = new Date(priceRequest.startDate);
+      trekkingPrice.endDate = new Date(priceRequest.endDate);
+      trekkingPrice.price = priceRequest.price;
+      if (priceRequest.id) {
+        trekkingPrice.id = priceRequest.id;
+      }
 
-      return price;
+      return trekkingPrice;
     });
   }
 }

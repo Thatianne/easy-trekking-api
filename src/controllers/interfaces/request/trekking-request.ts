@@ -7,13 +7,24 @@ export interface TrekkingRequest {
   distanceInMeters: number;
   durationInHours: number;
   difficultLevel: number;
-  descriptions: string[];
-  images: string[];
+  descriptions: DescriptionRequest[];
+  description: string;
+  images: ImageRequest[];
   prices: PriceDataRequest[];
   minPeople: number;
   maxPeople: number;
   daysFormGroup: number;
   daysCompletePayment: number;
+}
+
+interface DescriptionRequest {
+  id?: number;
+  description: string;
+}
+
+interface ImageRequest {
+  id?: number;
+  image: string;
 }
 
 export interface TrekkingFindRequest {
@@ -32,6 +43,7 @@ export interface TrekkingDeleteRequest {
 }
 
 interface PriceDataRequest {
+  id?: number;
   startDate: string; // date.toISOString()
   endDate: string;
   price: number;

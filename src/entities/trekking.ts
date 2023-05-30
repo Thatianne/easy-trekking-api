@@ -29,6 +29,9 @@ export class Trekking {
   name: string;
 
   @Column()
+  description: string;
+
+  @Column()
   start: string;
 
   @Column()

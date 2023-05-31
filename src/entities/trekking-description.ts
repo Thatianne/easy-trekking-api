@@ -17,7 +17,9 @@ export class TrekkingDescription {
   @ManyToOne(() => Trekking, (trekking) => trekking.id)
   trekking: Trekking;
 
-  @Column()
+  @Column({
+    type: 'longtext'
+  })
   description: string;
 
   @CreateDateColumn()

@@ -2,6 +2,9 @@ import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+  DeleteDateColumn,
   JoinTable,
   ManyToMany
 } from 'typeorm';
@@ -18,4 +21,13 @@ export class Association {
   @ManyToMany(() => User)
   @JoinTable()
   touristGuides: User[];
+
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @UpdateDateColumn()
+  updatedAt: Date;
+
+  @DeleteDateColumn({ select: false })
+  deletedAt?: Date;
 }

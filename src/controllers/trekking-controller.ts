@@ -42,8 +42,7 @@ export class TrekkingController {
       difficultLevel: true,
       descriptions: true,
       images: true,
-      prices: true,
-      rates: true
+      prices: true
     }
   };
 

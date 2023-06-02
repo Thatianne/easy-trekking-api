@@ -16,7 +16,6 @@ import { DifficultLevel } from './difficult-level';
 import { TrekkingDescription } from './trekking-description';
 import { TrekkingImage } from './trekking-image';
 import { TrekkingPrice } from './trekking-price';
-import { TrekkingRate } from './trekking-rate';
 import { Group } from './group';
 import { User } from './user';
 
@@ -76,9 +75,6 @@ export class Trekking {
 
   @Column()
   daysCompletePayment: number;
-
-  @OneToMany(() => TrekkingRate, (rate) => rate.trekking)
-  rates: TrekkingRate[];
 
   @OneToMany(() => Group, (group) => group.trekking)
   groups: Group[];
